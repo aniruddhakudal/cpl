@@ -1,9 +1,34 @@
+import { Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getAllSeasonsData } from './utils/dataLoader';
 import Dashboard from './components/Dashboard';
+import CPLRulesPage from './pages/CPLRulesPage';
 import './App.css';
 
-function App() {
+function PlaceholderPage() {
+  return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      backgroundColor: '#f5f5f5'
+    }}>
+      <img
+        src="https://via.placeholder.com/800x600/667eea/ffffff?text=Placeholder+Image"
+        alt="Placeholder"
+        style={{
+          maxWidth: '90%',
+          height: 'auto',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}
+      />
+    </div>
+  );
+}
+
+function DashboardPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,6 +95,16 @@ function App() {
       </header>
       <Dashboard data={data[selectedSeason]} season={selectedSeason} />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<PlaceholderPage />} />
+      <Route path="/sports/cricket/adults/dashboard" element={<DashboardPage />} />
+      <Route path="/sports/cricket/adults/cpl_rules" element={<CPLRulesPage />} />
+    </Routes>
   );
 }
 
