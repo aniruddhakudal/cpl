@@ -92,6 +92,7 @@ const MenBattingStatsPage = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
+        
         const result = await response.json();
         
         // Handle different possible response structures
