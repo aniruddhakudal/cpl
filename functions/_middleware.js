@@ -1,6 +1,5 @@
 export async function onRequest(context) {
-  const request = context.request;
-  const url = new URL(request.url);
+  const url = new URL(context.request.url);
   const pathname = url.pathname;
   
   // Don't rewrite if it's a static asset, root, or already index.html
@@ -14,12 +13,31 @@ export async function onRequest(context) {
     return context.next();
   }
   
-  // For SPA routes, rewrite to index.html
-  // Create a new request to /index.html
-  const indexUrl = new URL('/index.html', url.origin);
-  const indexRequest = new Request(indexUrl, request);
+  // For SPA routes, fetch index.html and return it
+  // This ensures React Router can handle the routing
+  try {
+    const indexUrl = new URL('/index.html', url.origin);
+    const indexRequest = new Request(indexUrl.toString(), {
+      method: context.request.method,
+      headers: context.request.headers,
+    });
+    
+    const response = await context.env.ASSETS.fetch(indexRequest);
+    
+    if (response.ok) {
+      // Return the index.html with the original URL preserved for React Router
+      return new Response(response.body, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html',
+        },
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching index.html:', error);
+  }
   
-  // Fetch the index.html from the assets
-  return context.env.ASSETS.fetch(indexRequest);
+  // Fallback to next() if something goes wrong
+  return context.next();
 }
 
