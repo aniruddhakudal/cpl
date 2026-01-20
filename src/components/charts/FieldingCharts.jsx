@@ -79,7 +79,9 @@ const FieldingCharts = ({ data }) => {
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       padding: '10px',
                       border: '1px solid #ccc',
-                      borderRadius: '4px'
+                      borderRadius: '4px',
+                      zIndex: 1000,
+                      position: 'relative'
                     }}>
                       <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
                       <p>Team: {data.team}</p>
@@ -112,7 +114,9 @@ const FieldingCharts = ({ data }) => {
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       padding: '10px',
                       border: '1px solid #ccc',
-                      borderRadius: '4px'
+                      borderRadius: '4px',
+                      zIndex: 1000,
+                      position: 'relative'
                     }}>
                       <p style={{ fontWeight: 'bold' }}>{payload[0].payload.fullName}</p>
                       <p>Team: {payload[0].payload.team}</p>

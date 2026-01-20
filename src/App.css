@@ -3,17 +3,20 @@
 }
 
 .app-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-secondary);
   padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   text-align: center;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
 .app-header h1 {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   font-weight: 700;
+  transition: color 0.3s ease;
 }
 
 .season-selector {
@@ -27,24 +30,24 @@
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  border: 2px solid #667eea;
-  background: white;
-  color: #667eea;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .season-selector button:hover {
-  background: #667eea;
-  color: white;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .season-selector button.active {
-  background: #667eea;
-  color: white;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
@@ -55,8 +58,9 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  color: white;
+  color: var(--text-inverse);
   text-align: center;
+  transition: color 0.3s ease;
 }
 
 .spinner {

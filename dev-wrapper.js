@@ -1,4 +1,25 @@
 // Wrapper script to handle file watcher errors on Windows
+// Set up error handlers BEFORE importing anything
+
+// Intercept process.emit to catch errors early
+const originalEmit = process.emit.bind(process);
+process.emit = function(type, ...args) {
+  if (type === 'uncaughtException') {
+    const error = args[0];
+    if (error && error.code === 'EINVAL' && error.path && (
+      error.path.includes('DumpStack.log.tmp') ||
+      error.path.includes('hiberfil.sys') ||
+      error.path.includes('pagefile.sys') ||
+      error.path.match(/^C:\\(DumpStack|hiberfil|pagefile|swapfile)/)
+    )) {
+      console.warn('⚠️  Ignoring file watcher error for system file:', error.path);
+      console.warn('   This is a known Windows issue. The dev server should still work.');
+      return true; // Prevent default error handling
+    }
+  }
+  return originalEmit(type, ...args);
+};
+
 process.on('uncaughtException', (error) => {
   // Ignore EINVAL errors for Windows system files
   if (error.code === 'EINVAL' && error.path && (
@@ -27,27 +48,9 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Set environment variable for polling mode
+// Set environment variables for polling mode
 process.env.CHOKIDAR_USEPOLLING = 'true';
 
-// Use spawn directly for more reliable startup
-import { spawn } from 'child_process';
-
-const vite = spawn('npx', ['vite'], { 
-  stdio: 'inherit',
-  shell: true,
-  env: { ...process.env, CHOKIDAR_USEPOLLING: 'true' }
-});
-
-vite.on('error', (error) => {
-  console.error('Failed to start Vite:', error);
-  process.exit(1);
-});
-
-vite.on('exit', (code) => {
-  if (code !== 0 && code !== null) {
-    console.error(`Vite process exited with code ${code}`);
-    process.exit(code);
-  }
-});
+// Import and run Vite directly instead of spawning
+import('./vite-start.js');
 

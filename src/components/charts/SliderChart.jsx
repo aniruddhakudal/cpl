@@ -64,7 +64,9 @@ const SliderChart = ({ data, title, dataKey, sortKey, color = '#667eea', label =
                       padding: '10px',
                       border: '1px solid #ccc',
                       borderRadius: '4px',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      zIndex: 1000,
+                      position: 'relative'
                     }}>
                       <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                         {payload[0].payload.fullName}

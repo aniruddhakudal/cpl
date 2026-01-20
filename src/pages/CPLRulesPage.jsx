@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { loadRulesFromDocx } from '../utils/rulesLoader';
+import ThemeToggle from '../components/ThemeToggle';
 import './CPLRulesPage.css';
 
 const CPLRulesPage = () => {
@@ -65,6 +66,7 @@ const CPLRulesPage = () => {
 
   return (
     <div className="rules-page">
+      <ThemeToggle />
       <header className="rules-header">
         <div className="rules-header-content">
           <img 

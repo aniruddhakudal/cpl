@@ -92,7 +92,9 @@ const MVPCharts = ({ data }) => {
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       padding: '10px',
                       border: '1px solid #ccc',
-                      borderRadius: '4px'
+                      borderRadius: '4px',
+                      zIndex: 1000,
+                      position: 'relative'
                     }}>
                       <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
                       <p>Team: {data.team}</p>
@@ -127,7 +129,9 @@ const MVPCharts = ({ data }) => {
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       padding: '10px',
                       border: '1px solid #ccc',
-                      borderRadius: '4px'
+                      borderRadius: '4px',
+                      zIndex: 1000,
+                      position: 'relative'
                     }}>
                       <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
                       <p>Batting: {data.batting}</p>
@@ -162,7 +166,9 @@ const MVPCharts = ({ data }) => {
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       padding: '10px',
                       border: '1px solid #ccc',
-                      borderRadius: '4px'
+                      borderRadius: '4px',
+                      zIndex: 1000,
+                      position: 'relative'
                     }}>
                       <p style={{ fontWeight: 'bold' }}>{data.name}</p>
                       <p>Avg MVP Points: {data.total}</p>

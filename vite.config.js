@@ -5,18 +5,34 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Set up error handler early to catch file watcher errors before Vite initializes
+process.on('uncaughtException', (error) => {
+  // Ignore EINVAL errors for Windows system files
+  if (error.code === 'EINVAL' && error.path && (
+    error.path.includes('DumpStack.log.tmp') ||
+    error.path.includes('hiberfil.sys') ||
+    error.path.includes('pagefile.sys') ||
+    error.path.match(/^C:\\(DumpStack|hiberfil|pagefile|swapfile)/)
+  )) {
+    console.warn('⚠️  Ignoring file watcher error for system file:', error.path)
+    console.warn('   This is a known Windows issue. The dev server should still work.')
+    return
+  }
+  // Re-throw other errors
+  throw error
+})
+
 // Custom plugin to handle file watcher errors
 const handleWatcherErrors = () => {
   return {
     name: 'handle-watcher-errors',
     configureServer(server) {
-      // Suppress file watcher errors
-      process.on('uncaughtException', (error) => {
+      // Additional error handling in server context
+      server.ws.on('error', (error) => {
         if (error.code === 'EINVAL' && error.path && error.path.includes('DumpStack.log.tmp')) {
           console.warn('Ignoring file watcher error for system file:', error.path)
           return
         }
-        throw error
       })
     }
   }
@@ -41,10 +57,17 @@ export default defineConfig({
         '**/dist/**',
         '**/DumpStack.log.tmp',
         '**/*.tmp',
+        'C:/DumpStack.log.tmp',
+        'C:\\DumpStack.log.tmp',
         (filePath) => {
           // Ignore anything at the root of C: drive (outside Users directory)
           const normalized = filePath.replace(/\\/g, '/')
+          // Match C:/filename (root level files)
           if (normalized.match(/^C:\/[^/]+$/)) {
+            return true
+          }
+          // Match C:\filename (Windows path format)
+          if (filePath.match(/^C:\\(DumpStack|hiberfil|pagefile|swapfile)/)) {
             return true
           }
           // Ignore system temp files

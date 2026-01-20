@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "node dev-wrapper.js",
     "dev:direct": "vite",
+    "dev:safe": "node vite-start.js",
     "build": "vite build",
     "preview": "vite preview"
   },

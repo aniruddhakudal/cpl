@@ -5,6 +5,9 @@ import BowlingCharts from '../components/charts/BowlingCharts';
 import FieldingCharts from '../components/charts/FieldingCharts';
 import MVPCharts from '../components/charts/MVPCharts';
 import TeamComparison from '../components/charts/TeamComparison';
+import TournamentSelector from '../components/TournamentSelector';
+import SeasonSelector from '../components/SeasonSelector';
+import StatSelector from '../components/StatSelector';
 import '../App.css';
 
 const AllChartsDashboard = () => {
@@ -12,6 +15,11 @@ const AllChartsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState('cpl1');
+  const [selectedTournament, setSelectedTournament] = useState(null);
+  const [selectedSeasonFromAPI, setSelectedSeasonFromAPI] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [entity, setEntity] = useState('adults');
+  const [cohort, setCohort] = useState('adults');
 
   useEffect(() => {
     const loadData = async () => {
@@ -59,6 +67,31 @@ const AllChartsDashboard = () => {
     <div className="app">
       <header className="app-header">
         <h1>🏏 CPL Cricket Tournament Dashboard</h1>
+        <div className="selectors-container">
+          <TournamentSelector 
+            entity={entity}
+            cohort={cohort}
+            onTournamentChange={(tournamentId, tournament) => {
+              setSelectedTournament({ id: tournamentId, data: tournament });
+              setCategory(tournamentId); // Set category when tournament is selected
+            }}
+          />
+          <SeasonSelector 
+            entity={entity}
+            cohort={cohort}
+            category={category}
+            onSeasonChange={(seasonId, season) => {
+              setSelectedSeasonFromAPI({ id: seasonId, data: season });
+            }}
+          />
+          <StatSelector 
+            category={category}
+            selectedSeason={selectedSeasonFromAPI?.id}
+            onStatChange={(stat) => {
+              // Handle stat selection if needed
+            }}
+          />
+        </div>
         <div className="season-selector">
           <button
             className={selectedSeason === 'cpl1' ? 'active' : ''}
@@ -106,4 +139,6 @@ const AllChartsDashboard = () => {
 };
 
 export default AllChartsDashboard;
+
+
 
