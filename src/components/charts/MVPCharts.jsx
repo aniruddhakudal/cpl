@@ -3,10 +3,23 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
+import { useTheme } from '../../contexts/ThemeContext';
 import ChartCard from '../ChartCard';
 import SliderChart from './SliderChart';
 
 const MVPCharts = ({ data }) => {
+  const { theme } = useTheme();
+  
+  const tooltipStyle = {
+    backgroundColor: theme === 'dark' ? 'rgba(30, 30, 46, 0.98)' : 'rgba(255, 255, 255, 0.95)',
+    padding: '10px',
+    border: theme === 'dark' ? '1px solid #667eea' : '1px solid #ccc',
+    borderRadius: '4px',
+    zIndex: 1000,
+    position: 'relative',
+    color: theme === 'dark' ? '#e0e0e0' : '#333'
+  };
+  
   const topMVPs = useMemo(() => {
     return [...data]
       .filter(p => p.Total > 0)
@@ -88,20 +101,13 @@ const MVPCharts = ({ data }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      zIndex: 1000,
-                      position: 'relative'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
-                      <p>Team: {data.team}</p>
-                      <p>Total Points: {data.total}</p>
-                      <p>Batting: {data.batting}</p>
-                      <p>Bowling: {data.bowling}</p>
-                      <p>Fielding: {data.fielding}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {data.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Total Points: {data.total}</p>
+                      <p style={{ color: tooltipStyle.color }}>Batting: {data.batting}</p>
+                      <p style={{ color: tooltipStyle.color }}>Bowling: {data.bowling}</p>
+                      <p style={{ color: tooltipStyle.color }}>Fielding: {data.fielding}</p>
                     </div>
                   );
                 }
@@ -125,18 +131,11 @@ const MVPCharts = ({ data }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      zIndex: 1000,
-                      position: 'relative'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
-                      <p>Batting: {data.batting}</p>
-                      <p>Bowling: {data.bowling}</p>
-                      <p>Fielding: {data.fielding}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Batting: {data.batting}</p>
+                      <p style={{ color: tooltipStyle.color }}>Bowling: {data.bowling}</p>
+                      <p style={{ color: tooltipStyle.color }}>Fielding: {data.fielding}</p>
                     </div>
                   );
                 }
@@ -162,17 +161,10 @@ const MVPCharts = ({ data }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      zIndex: 1000,
-                      position: 'relative'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.name}</p>
-                      <p>Avg MVP Points: {data.total}</p>
-                      <p>Players: {data.players}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.name}</p>
+                      <p style={{ color: tooltipStyle.color }}>Avg MVP Points: {data.total}</p>
+                      <p style={{ color: tooltipStyle.color }}>Players: {data.players}</p>
                     </div>
                   );
                 }

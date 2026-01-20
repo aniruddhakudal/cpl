@@ -3,9 +3,22 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
+import { useTheme } from '../../contexts/ThemeContext';
 import ChartCard from '../ChartCard';
 
 const FieldingCharts = ({ data }) => {
+  const { theme } = useTheme();
+  
+  const tooltipStyle = {
+    backgroundColor: theme === 'dark' ? 'rgba(30, 30, 46, 0.98)' : 'rgba(255, 255, 255, 0.95)',
+    padding: '10px',
+    border: theme === 'dark' ? '1px solid #667eea' : '1px solid #ccc',
+    borderRadius: '4px',
+    zIndex: 1000,
+    position: 'relative',
+    color: theme === 'dark' ? '#e0e0e0' : '#333'
+  };
+  
   const topFielders = useMemo(() => {
     return [...data]
       .filter(p => p.total_dismissal > 0)
@@ -75,19 +88,12 @@ const FieldingCharts = ({ data }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      zIndex: 1000,
-                      position: 'relative'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
-                      <p>Team: {data.team}</p>
-                      <p>Total Dismissals: {data.dismissals}</p>
-                      <p>Catches: {data.catches}</p>
-                      <p>Run Outs: {data.runOuts}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {data.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Total Dismissals: {data.dismissals}</p>
+                      <p style={{ color: tooltipStyle.color }}>Catches: {data.catches}</p>
+                      <p style={{ color: tooltipStyle.color }}>Run Outs: {data.runOuts}</p>
                     </div>
                   );
                 }
@@ -110,17 +116,10 @@ const FieldingCharts = ({ data }) => {
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      zIndex: 1000,
-                      position: 'relative'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{payload[0].payload.fullName}</p>
-                      <p>Team: {payload[0].payload.team}</p>
-                      <p>Catches: {payload[0].value}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{payload[0].payload.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {payload[0].payload.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Catches: {payload[0].value}</p>
                     </div>
                   );
                 }
@@ -144,15 +143,10 @@ const FieldingCharts = ({ data }) => {
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div style={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        padding: '10px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px'
-                      }}>
-                        <p style={{ fontWeight: 'bold' }}>{payload[0].payload.fullName}</p>
-                        <p>Team: {payload[0].payload.team}</p>
-                        <p>Run Outs: {payload[0].value}</p>
+                    <div style={tooltipStyle}>
+                        <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{payload[0].payload.fullName}</p>
+                        <p style={{ color: tooltipStyle.color }}>Team: {payload[0].payload.team}</p>
+                        <p style={{ color: tooltipStyle.color }}>Run Outs: {payload[0].value}</p>
                       </div>
                     );
                   }

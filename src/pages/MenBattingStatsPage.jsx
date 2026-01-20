@@ -38,6 +38,7 @@ const transformBattingData = (apiData) => {
       average: normalizeNumber(getValue(player, 'average', 'avg', 'Average', 'battingAverage')),
       '4s': normalizeNumber(getValue(player, '4s', 'fours', 'Fours', 'fours')),
       '6s': normalizeNumber(getValue(player, '6s', 'sixes', 'Sixes', 'sixes')),
+      '30s': normalizeNumber(getValue(player, '30s', 'thirties', 'Thirties', 'thirties')),
       '50s': normalizeNumber(getValue(player, '50s', 'fifties', 'Fifties', 'fifties')),
       '100s': normalizeNumber(getValue(player, '100s', 'hundreds', 'Hundreds', 'centuries')),
       highest_run: normalizeNumber(getValue(player, 'highest_run', 'highestRun', 'highest_score', 'highestScore', 'HS', 'hs')),

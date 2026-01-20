@@ -3,10 +3,23 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ScatterChart, Scatter, Cell, PieChart, Pie, LineChart, Line
 } from 'recharts';
+import { useTheme } from '../../contexts/ThemeContext';
 import ChartCard from '../ChartCard';
 import SliderChart from './SliderChart';
 
 const BattingCharts = ({ data, selectedSeason }) => {
+  const { theme } = useTheme();
+  
+  const tooltipStyle = {
+    backgroundColor: theme === 'dark' ? 'rgba(30, 30, 46, 0.98)' : 'rgba(255, 255, 255, 0.95)',
+    padding: '10px',
+    border: theme === 'dark' ? '1px solid #667eea' : '1px solid #ccc',
+    borderRadius: '4px',
+    zIndex: 1000,
+    position: 'relative',
+    color: theme === 'dark' ? '#e0e0e0' : '#333'
+  };
+  
   // Aggregate runs by player_id for Top Run Scorers chart
   const aggregatedRunScorers = useMemo(() => {
     const playerMap = new Map();
@@ -117,19 +130,21 @@ const BattingCharts = ({ data, selectedSeason }) => {
   }, [data]);
 
   const fiftiesAndHundreds = useMemo(() => {
-    // Aggregate 50s and 100s by player_id
+    // Aggregate 30s, 50s and 100s by player_id
     const playerMap = new Map();
     
     data.forEach(player => {
       const playerId = player.player_id || player.name || 'Unknown';
+      const thirties = player['30s'] || 0;
       const fifties = player['50s'] || 0;
       const hundreds = player['100s'] || 0;
       
-      // Only process players with at least one 50 or 100
-      if (fifties > 0 || hundreds > 0) {
+      // Only process players with at least one 30, 50 or 100
+      if (thirties > 0 || fifties > 0 || hundreds > 0) {
         if (playerMap.has(playerId)) {
-          // Aggregate 50s and 100s for existing player
+          // Aggregate 30s, 50s and 100s for existing player
           const existing = playerMap.get(playerId);
+          existing['30s'] += thirties;
           existing['50s'] += fifties;
           existing['100s'] += hundreds;
         } else {
@@ -137,6 +152,7 @@ const BattingCharts = ({ data, selectedSeason }) => {
           playerMap.set(playerId, {
             player_id: playerId,
             name: player.name || 'Unknown',
+            '30s': thirties,
             '50s': fifties,
             '100s': hundreds
           });
@@ -144,16 +160,17 @@ const BattingCharts = ({ data, selectedSeason }) => {
       }
     });
     
-    // Convert to array, sort by total count (50s + 100s), and format
+    // Convert to array, sort by total count (30s + 50s + 100s), and format
     return Array.from(playerMap.values())
       .sort((a, b) => {
-        const totalA = a['50s'] + a['100s'];
-        const totalB = b['50s'] + b['100s'];
+        const totalA = a['30s'] + a['50s'] + a['100s'];
+        const totalB = b['30s'] + b['50s'] + b['100s'];
         return totalB - totalA; // Descending order
       })
       .map(player => ({
         name: player.name.length > 15 ? player.name.substring(0, 15) + '...' : player.name,
         fullName: player.name,
+        '30s': player['30s'],
         '50s': player['50s'],
         '100s': player['100s']
       }));
@@ -208,19 +225,12 @@ const BattingCharts = ({ data, selectedSeason }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      zIndex: 1000,
-                      position: 'relative'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.name}</p>
-                      <p>Team: {data.team}</p>
-                      <p>Average: {data.average}</p>
-                      <p>Strike Rate: {data.strikeRate}</p>
-                      <p>Total Runs: {data.runs}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.name}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {data.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Average: {data.average}</p>
+                      <p style={{ color: tooltipStyle.color }}>Strike Rate: {data.strikeRate}</p>
+                      <p style={{ color: tooltipStyle.color }}>Total Runs: {data.runs}</p>
                     </div>
                   );
                 }
@@ -246,18 +256,11 @@ const BattingCharts = ({ data, selectedSeason }) => {
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      zIndex: 1000,
-                      position: 'relative'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{payload[0].payload.fullName}</p>
-                      <p>4s: {payload[0].payload['4s']}</p>
-                      <p>6s: {payload[0].payload['6s']}</p>
-                      <p>Total: {payload[0].payload.total}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{payload[0].payload.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>4s: {payload[0].payload['4s']}</p>
+                      <p style={{ color: tooltipStyle.color }}>6s: {payload[0].payload['6s']}</p>
+                      <p style={{ color: tooltipStyle.color }}>Total: {payload[0].payload.total}</p>
                     </div>
                   );
                 }
@@ -281,7 +284,7 @@ const BattingCharts = ({ data, selectedSeason }) => {
       />
 
       {fiftiesAndHundreds.length > 0 && (
-        <ChartCard title="50s and 100s">
+        <ChartCard title="30s, 50s and 100s">
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={fiftiesAndHundreds}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -289,6 +292,7 @@ const BattingCharts = ({ data, selectedSeason }) => {
               <YAxis />
               <Tooltip />
               <Legend />
+              <Bar dataKey="30s" fill="#4facfe" name="30s" />
               <Bar dataKey="50s" fill="#fee140" name="50s" />
               <Bar dataKey="100s" fill="#fa709a" name="100s" />
             </BarChart>
