@@ -1,16 +1,25 @@
-export function onRequest(context) {
-  const url = new URL(context.request.url);
+export async function onRequest(context) {
+  const request = context.request;
+  const url = new URL(request.url);
+  const pathname = url.pathname;
   
-  // Don't rewrite if it's a static asset or already index.html
+  // Don't rewrite if it's a static asset, root, or already index.html
   if (
-    url.pathname === '/index.html' ||
-    url.pathname.startsWith('/assets/') ||
-    url.pathname.match(/\.(js|css|json|png|jpg|jpeg|svg|ico|woff|woff2|ttf|eot)$/i)
+    pathname === '/index.html' ||
+    pathname === '/' ||
+    pathname.startsWith('/assets/') ||
+    pathname.startsWith('/_') ||
+    pathname.match(/\.(js|css|json|png|jpg|jpeg|svg|ico|woff|woff2|ttf|eot|webp|gif|mp4|webm|map)$/i)
   ) {
     return context.next();
   }
   
-  // Rewrite all other paths to index.html for SPA routing
-  return context.rewrite(new URL('/index.html', url.origin));
+  // For SPA routes, rewrite to index.html
+  // Create a new request to /index.html
+  const indexUrl = new URL('/index.html', url.origin);
+  const indexRequest = new Request(indexUrl, request);
+  
+  // Fetch the index.html from the assets
+  return context.env.ASSETS.fetch(indexRequest);
 }
 
