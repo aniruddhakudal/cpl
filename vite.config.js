@@ -1,26 +1,9 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// import react from '@vitejs/plugin-react'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-// Set up error handler early to catch file watcher errors before Vite initializes
-process.on('uncaughtException', (error) => {
-  // Ignore EINVAL errors for Windows system files
-  if (error.code === 'EINVAL' && error.path && (
-    error.path.includes('DumpStack.log.tmp') ||
-    error.path.includes('hiberfil.sys') ||
-    error.path.includes('pagefile.sys') ||
-    error.path.match(/^C:\\(DumpStack|hiberfil|pagefile|swapfile)/)
-  )) {
-    console.warn('⚠️  Ignoring file watcher error for system file:', error.path)
-    console.warn('   This is a known Windows issue. The dev server should still work.')
-    return
-  }
-  // Re-throw other errors
-  throw error
-})
 
 // Custom plugin to handle file watcher errors
 const handleWatcherErrors = () => {
@@ -39,7 +22,13 @@ const handleWatcherErrors = () => {
 }
 
 export default defineConfig({
-  plugins: [react(), handleWatcherErrors()],
+  plugins: [
+    // react({
+    //  jsxRuntime: 'automatic',
+    //  fastRefresh: false  // Disable Fast Refresh to prevent RefreshRuntime conflicts
+    //}), 
+    handleWatcherErrors()
+  ],
   root: __dirname,
   build: {
     outDir: 'dist',
@@ -48,6 +37,9 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    hmr: {
+      overlay: true
+    },
     watch: {
       usePolling: true,
       interval: 1000,
@@ -59,6 +51,7 @@ export default defineConfig({
         '**/*.tmp',
         'C:/DumpStack.log.tmp',
         'C:\\DumpStack.log.tmp',
+        'vite.config.js', // Ignore vite.config.js changes to prevent reload issues
         (filePath) => {
           // Ignore anything at the root of C: drive (outside Users directory)
           const normalized = filePath.replace(/\\/g, '/')
