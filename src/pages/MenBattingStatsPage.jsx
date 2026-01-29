@@ -5,6 +5,8 @@ import SeasonSelector from '../components/SeasonSelector';
 import StatSelector from '../components/StatSelector';
 import BattingCharts from '../components/charts/BattingCharts';
 import BowlingCharts from '../components/charts/BowlingCharts';
+import FieldingCharts from '../components/charts/FieldingCharts';
+import MVPCharts from '../components/charts/MVPCharts';
 import ThemeToggle from '../components/ThemeToggle';
 import '../App.css';
 
@@ -88,6 +90,66 @@ const transformBattingData = (apiData) => {
   });
 };
 
+// Transform API data to match the format expected by FieldingCharts component
+const transformFieldingData = (apiData) => {
+  return apiData.map(player => {
+    const getValue = (obj, ...keys) => {
+      for (const key of keys) {
+        if (obj[key] !== undefined && obj[key] !== null) {
+          return obj[key];
+        }
+      }
+      return 0;
+    };
+    const normalizeNumber = (value) => {
+      if (typeof value === 'number') return value;
+      if (typeof value === 'string') {
+        const parsed = parseFloat(value);
+        return isNaN(parsed) ? 0 : parsed;
+      }
+      return 0;
+    };
+    return {
+      player_id: getValue(player, 'player_id', 'id', 'playerId') || getValue(player, 'name', 'player_name') || 'Unknown',
+      name: getValue(player, 'name', 'player_name', 'player', 'Name', 'Player') || 'Unknown',
+      total_dismissal: normalizeNumber(getValue(player, 'total_dismissal', 'dismissals', 'totalDismissals', 'Dismissals')),
+      total_catches: normalizeNumber(getValue(player, 'total_catches', 'catches', 'Catches', 'totalCatches')),
+      run_outs: normalizeNumber(getValue(player, 'run_outs', 'runOuts', 'Run Outs', 'run_outs')),
+      team_name: getValue(player, 'team_name', 'team', 'Team', 'teamName') || 'Unknown'
+    };
+  });
+};
+
+// Transform API data to match the format expected by MVPCharts component
+const transformMVPData = (apiData) => {
+  return apiData.map(player => {
+    const getValue = (obj, ...keys) => {
+      for (const key of keys) {
+        if (obj[key] !== undefined && obj[key] !== null) {
+          return obj[key];
+        }
+      }
+      return 0;
+    };
+    const normalizeNumber = (value) => {
+      if (typeof value === 'number') return value;
+      if (typeof value === 'string') {
+        const parsed = parseFloat(value);
+        return isNaN(parsed) ? 0 : parsed;
+      }
+      return 0;
+    };
+    return {
+      'Player Name': getValue(player, 'player_name', 'name', 'player', 'Player Name', 'playerName') || 'Unknown',
+      'Team Name': getValue(player, 'team_name', 'team', 'Team', 'Team Name', 'teamName') || 'Unknown',
+      Total: normalizeNumber(getValue(player, 'total', 'Total', 'mvp_points', 'mvpPoints', 'total_points', 'totalPoints')),
+      Batting: normalizeNumber(getValue(player, 'batting', 'Batting', 'batting_points', 'battingPoints')),
+      Bowling: normalizeNumber(getValue(player, 'bowling', 'Bowling', 'bowling_points', 'bowlingPoints')),
+      Fielding: normalizeNumber(getValue(player, 'fielding', 'Fielding', 'fielding_points', 'fieldingPoints'))
+    };
+  });
+};
+
 const MenBattingStatsPage = () => {
   const { entity, cohort } = useParams();
   const [selectedTournament, setSelectedTournament] = useState(null);
@@ -96,6 +158,8 @@ const MenBattingStatsPage = () => {
   const [selectedStat, setSelectedStat] = useState(null);
   const [battingData, setBattingData] = useState(null);
   const [bowlingData, setBowlingData] = useState(null);
+  const [fieldingData, setFieldingData] = useState(null);
+  const [mvpData, setMvpData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -107,6 +171,8 @@ const MenBattingStatsPage = () => {
       if (!selectedStat || !category || !selectedSeason?.id || !entity || !cohort) {
         setBattingData(null);
         setBowlingData(null);
+        setFieldingData(null);
+        setMvpData(null);
         return;
       }
 
@@ -120,9 +186,15 @@ const MenBattingStatsPage = () => {
           url = `https://cpl-backend-h9oc.onrender.com/v1/sports/cricket/batting_stats?entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}&limit=0`;
         } else if (selectedStat === 'Bowling') {
           url = `https://cpl-backend-h9oc.onrender.com/v1/sports/cricket/bowling_stats?entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}&limit=0`;
+        } else if (selectedStat === 'Fielding') {
+          url = `https://cpl-backend-h9oc.onrender.com/v1/sports/cricket/fielding_stats?entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}&limit=0`;
+        } else if (selectedStat === 'MVP') {
+          url = `https://cpl-backend-h9oc.onrender.com/v1/sports/cricket/mvp_stats?entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}&limit=0`;
         } else {
           setBattingData(null);
           setBowlingData(null);
+          setFieldingData(null);
+          setMvpData(null);
           setLoading(false);
           return;
         }
@@ -146,7 +218,7 @@ const MenBattingStatsPage = () => {
         const result = await response.json();
         
         // Handle different possible response structures
-        let statsData = result.data || result.batting_stats || result.bowling_stats || result;
+        let statsData = result.data || result.batting_stats || result.bowling_stats || result.fielding_stats || result.mvp_stats || result;
         
         // If it's wrapped in another property, try common names
         if (!Array.isArray(statsData)) {
@@ -163,17 +235,35 @@ const MenBattingStatsPage = () => {
           const transformedData = transformBattingData(statsData);
           setBattingData(transformedData);
           setBowlingData(null);
+          setFieldingData(null);
+          setMvpData(null);
         } else if (selectedStat === 'Bowling') {
           const transformedData = transformBowlingData(statsData);
           setBowlingData(transformedData);
           setBattingData(null);
+          setFieldingData(null);
+          setMvpData(null);
+        } else if (selectedStat === 'Fielding') {
+          const transformedData = transformFieldingData(statsData);
+          setFieldingData(transformedData);
+          setBattingData(null);
+          setBowlingData(null);
+          setMvpData(null);
+        } else if (selectedStat === 'MVP') {
+          const transformedData = transformMVPData(statsData);
+          setMvpData(transformedData);
+          setBattingData(null);
+          setBowlingData(null);
+          setFieldingData(null);
         }
       } catch (err) {
-        const statName = selectedStat === 'Batting' ? 'batting' : selectedStat === 'Bowling' ? 'bowling' : 'statistics';
+        const statName = selectedStat === 'Batting' ? 'batting' : selectedStat === 'Bowling' ? 'bowling' : selectedStat === 'Fielding' ? 'fielding' : selectedStat === 'MVP' ? 'MVP' : 'statistics';
         setError(`Failed to load ${statName} statistics: ${err.message}`);
         console.error(`Error fetching ${statName} stats:`, err);
         setBattingData(null);
         setBowlingData(null);
+        setFieldingData(null);
+        setMvpData(null);
       } finally {
         setLoading(false);
       }
@@ -250,6 +340,28 @@ const MenBattingStatsPage = () => {
         </div>
       )}
 
+      {!loading && !error && selectedStat === 'Fielding' && fieldingData && fieldingData.length > 0 && (
+        <div className="all-charts-container" style={{ padding: '20px' }}>
+          <section style={{ marginBottom: '40px' }}>
+            <h2 style={{ fontSize: '24px', marginBottom: '20px', color: 'var(--text-primary)' }}>
+              🧤 Fielding Statistics
+            </h2>
+            <FieldingCharts data={fieldingData} />
+          </section>
+        </div>
+      )}
+
+      {!loading && !error && selectedStat === 'MVP' && mvpData && mvpData.length > 0 && (
+        <div className="all-charts-container" style={{ padding: '20px' }}>
+          <section style={{ marginBottom: '40px' }}>
+            <h2 style={{ fontSize: '24px', marginBottom: '20px', color: 'var(--text-primary)' }}>
+              ⭐ MVP Statistics
+            </h2>
+            <MVPCharts data={mvpData} />
+          </section>
+        </div>
+      )}
+
       {!loading && !error && selectedStat === 'Batting' && battingData && battingData.length === 0 && (
         <div className="error-container" style={{ minHeight: '200px' }}>
           <h2>No Data Available</h2>
@@ -261,6 +373,20 @@ const MenBattingStatsPage = () => {
         <div className="error-container" style={{ minHeight: '200px' }}>
           <h2>No Data Available</h2>
           <p>No bowling statistics found for the selected filters.</p>
+        </div>
+      )}
+
+      {!loading && !error && selectedStat === 'Fielding' && fieldingData && fieldingData.length === 0 && (
+        <div className="error-container" style={{ minHeight: '200px' }}>
+          <h2>No Data Available</h2>
+          <p>No fielding statistics found for the selected filters.</p>
+        </div>
+      )}
+
+      {!loading && !error && selectedStat === 'MVP' && mvpData && mvpData.length === 0 && (
+        <div className="error-container" style={{ minHeight: '200px' }}>
+          <h2>No Data Available</h2>
+          <p>No MVP statistics found for the selected filters.</p>
         </div>
       )}
     </div>
