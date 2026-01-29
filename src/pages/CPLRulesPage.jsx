@@ -17,7 +17,7 @@ const CPLRulesPage = () => {
         setRules(rulesData);
         setError(null);
       } catch (err) {
-        setError('Failed to load rules. Please ensure the rules file is accessible.');
+        setError('Failed to load rules.. Please ensure the rules file is accessible.');
         console.error(err);
       } finally {
         setLoading(false);
