@@ -1,3 +1,24 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg-primary);
+  transition: background 0.3s ease;
+}
+
+.home-page__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+  padding: 0 1rem;
+  transition: color 0.3s ease;
+}
+
 .app {
   min-height: 100vh;
 }

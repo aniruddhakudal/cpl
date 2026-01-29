@@ -10,27 +10,11 @@ import StatSelector from './components/StatSelector';
 import ThemeToggle from './components/ThemeToggle';
 import './App.css';
 
-function PlaceholderPage() {
+function HomePage() {
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#f5f5f5',
-      position: 'relative'
-    }}>
+    <div className="home-page">
       <ThemeToggle />
-      <img
-        src="https://via.placeholder.com/800x600/667eea/ffffff?text=Placeholder+Image"
-        alt="Placeholder"
-        style={{
-          maxWidth: '90%',
-          height: 'auto',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        }}
-      />
+      <h1 className="home-page__title">Welcome to Crickipedia Stats</h1>
     </div>
   );
 }
@@ -139,7 +123,7 @@ function DashboardPage() {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<PlaceholderPage />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="/sports/cricket/adults/dashboard" element={<DashboardPage />} />
       <Route path="/sports/cricket/adults/cpl_rules" element={<CPLRulesPage />} />
       <Route path="/sports/cricket/:entity/:cohort" element={<MenBattingStatsPage />} />
