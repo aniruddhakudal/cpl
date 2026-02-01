@@ -1,3 +1,48 @@
+const API_BASE = 'https://cpl-backend-h9oc.onrender.com';
+
+/**
+ * Fetches cohorts for an entity from the API
+ * @param {string} entity - The entity parameter (e.g., 'celebria', 'adults')
+ * @returns {Promise<Array>} Array of cohort values
+ */
+export const fetchCohorts = async (entity) => {
+  if (!entity) {
+    return [];
+  }
+
+  try {
+    const url = `${API_BASE}/v1/sports/cricket/tournaments?field=cohort&entity=${encodeURIComponent(entity)}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    let values = result.values;
+
+    if (!values && result.data) {
+      values = result.data.values || result.data;
+    }
+    if (!Array.isArray(values)) {
+      values = result.cohorts?.values || result.results?.values || [];
+    }
+    if (Array.isArray(values)) {
+      return values;
+    }
+    if (Array.isArray(result)) {
+      return result;
+    }
+    if (Array.isArray(result.data)) {
+      return result.data;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching cohorts:', error);
+    return [];
+  }
+};
+
 /**
  * Fetches tournaments from the API based on entity and cohort
  * @param {string} entity - The entity parameter (e.g., 'men', 'women', 'adults')
@@ -10,7 +55,7 @@ export const fetchTournaments = async (entity, cohort) => {
   }
 
   try {
-    const url = `https://cpl-backend-h9oc.onrender.com/v1/sports/cricket/tournaments?field=category&entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}`;
+    const url = `${API_BASE}/v1/sports/cricket/tournaments?field=category&entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}`;
     const response = await fetch(url);
     
     if (!response.ok) {
@@ -68,7 +113,7 @@ export const fetchSeasons = async (entity, cohort, category = null) => {
   }
 
   try {
-    let url = `https://cpl-backend-h9oc.onrender.com/v1/sports/cricket/tournaments?field=season&entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}`;
+    let url = `${API_BASE}/v1/sports/cricket/tournaments?field=season&entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}`;
     if (category) {
       url += `&category=${encodeURIComponent(category)}`;
     }

@@ -150,7 +150,7 @@ const transformMVPData = (apiData) => {
   });
 };
 
-const MenBattingStatsPage = () => {
+const StatsPage = () => {
   const { entity, cohort } = useParams();
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
@@ -274,7 +274,6 @@ const MenBattingStatsPage = () => {
 
   return (
     <div className="app">
-      <ThemeToggle />
       <header className="app-header">
         <h1>🏏 {entity ? entity.charAt(0).toUpperCase() + entity.slice(1) : ''} {cohort ? cohort.charAt(0).toUpperCase() + cohort.slice(1) : ''} Stats</h1>
         <div className="selectors-container">
@@ -393,5 +392,4 @@ const MenBattingStatsPage = () => {
   );
 };
 
-export default MenBattingStatsPage;
-
+export default StatsPage;

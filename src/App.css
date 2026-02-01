@@ -9,6 +9,90 @@
   transition: background 0.3s ease;
 }
 
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+}
+
+.profile-page {
+  padding: 2rem;
+  text-align: center;
+  min-height: 50vh;
+}
+
+.profile-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.profile-page p {
+  color: var(--text-secondary);
+}
+
+.profile-page__subtitle {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.profile-page__selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.profile-page__selector label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-page__selector .selector-dropdown {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 220px;
+  max-width: 100%;
+}
+
+.profile-page__selector .selector-dropdown:hover:not(:disabled) {
+  border-color: var(--border-color-hover);
+}
+
+.profile-page__selector .selector-dropdown:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.profile-page__empty {
+  margin-top: 1rem;
+}
+
+.profile-page__content {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .home-page__title {
   font-size: 2.5rem;
   font-weight: 700;
