@@ -150,11 +150,13 @@ const transformMVPData = (apiData) => {
   });
 };
 
+const ALL_SEASON = { id: 'ALL', data: null };
+
 const StatsPage = () => {
   const { entity, cohort } = useParams();
   const [selectedTournament, setSelectedTournament] = useState(null);
-  const [selectedSeason, setSelectedSeason] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [selectedSeason, setSelectedSeason] = useState(ALL_SEASON);
+  const [category, setCategory] = useState('ALL');
   const [selectedStat, setSelectedStat] = useState(null);
   const [battingData, setBattingData] = useState(null);
   const [bowlingData, setBowlingData] = useState(null);

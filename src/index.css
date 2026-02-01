@@ -4,28 +4,28 @@
   box-sizing: border-box;
 }
 
-/* Light Theme (Default) */
+/* Light Theme (Default) – readable contrast */
 :root[data-theme='light'],
 :root {
-  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-secondary: rgba(255, 255, 255, 0.95);
-  --bg-tertiary: rgba(255, 255, 255, 0.8);
-  --bg-hover: rgba(255, 255, 255, 1);
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --text-primary: #333;
-  --text-secondary: #666;
-  --text-inverse: #fff;
-  --border-color: #667eea;
-  --border-color-hover: #5568d3;
-  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.15);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.1);
-  --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
-  --accent-primary: #667eea;
-  --accent-secondary: #764ba2;
-  --accent-hover: #5568d3;
-  --disabled-bg: #f5f5f5;
-  --error-color: #e74c3c;
+  --bg-primary: linear-gradient(135deg, #e8ecff 0%, #f5f3ff 50%, #faf5ff 100%);
+  --bg-secondary: #ffffff;
+  --bg-tertiary: rgba(255, 255, 255, 0.9);
+  --bg-hover: #f1f5f9;
+  --bg-card: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-inverse: #ffffff;
+  --border-color: #6366f1;
+  --border-color-hover: #4f46e5;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --accent-primary: #4f46e5;
+  --accent-secondary: #6366f1;
+  --accent-hover: #4338ca;
+  --disabled-bg: #f1f5f9;
+  --error-color: #dc2626;
 }
 
 /* Dark Theme */
@@ -37,7 +37,8 @@
   --bg-card: rgba(30, 30, 46, 0.95);
   --text-primary: #e0e0e0;
   --text-secondary: #b0b0b0;
-  --text-inverse: #1a1a2e;
+  /* Light text on accent/dark backgrounds (nav active, buttons, hover) for visibility */
+  --text-inverse: #ffffff;
   --border-color: #667eea;
   --border-color-hover: #7a8ef0;
   --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);

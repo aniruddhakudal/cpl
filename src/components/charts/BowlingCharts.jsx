@@ -272,7 +272,20 @@ const BowlingCharts = ({ data }) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload;
+                  return (
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.name}</p>
+                      <p style={{ color: tooltipStyle.color }}>Total Wickets: {data.wickets}</p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
             <Legend />
             <Bar dataKey="wickets" fill="#43e97b" name="Total Wickets" />
           </BarChart>

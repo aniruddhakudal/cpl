@@ -290,7 +290,22 @@ const BattingCharts = ({ data, selectedSeason }) => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
               <YAxis />
-              <Tooltip />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div style={tooltipStyle}>
+                        <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.fullName}</p>
+                        <p style={{ color: tooltipStyle.color }}>30s: {data['30s']}</p>
+                        <p style={{ color: tooltipStyle.color }}>50s: {data['50s']}</p>
+                        <p style={{ color: tooltipStyle.color }}>100s: {data['100s']}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
               <Legend />
               <Bar dataKey="30s" fill="#4facfe" name="30s" />
               <Bar dataKey="50s" fill="#fee140" name="50s" />
