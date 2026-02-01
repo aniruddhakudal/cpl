@@ -51,7 +51,8 @@ export const fetchCohorts = async (entity) => {
  */
 export const fetchTournaments = async (entity, cohort) => {
   if (!entity || !cohort) {
-    throw new Error('Entity and cohort are required to fetch tournaments');
+    console.warn('fetchTournaments: entity and cohort are required');
+    return [];
   }
 
   try {
@@ -59,7 +60,8 @@ export const fetchTournaments = async (entity, cohort) => {
     const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      console.error('fetchTournaments: HTTP error', response.status, await response.text());
+      return [];
     }
     
     const result = await response.json();
@@ -96,7 +98,7 @@ export const fetchTournaments = async (entity, cohort) => {
     return [];
   } catch (error) {
     console.error('Error fetching tournaments:', error);
-    throw error;
+    return [];
   }
 };
 

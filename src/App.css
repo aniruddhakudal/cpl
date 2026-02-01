@@ -103,6 +103,14 @@
   transition: color 0.3s ease;
 }
 
+.home-page__subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin: 0.5rem 0 0;
+  text-align: center;
+  padding: 0 1rem;
+}
+
 .app {
   min-height: 100vh;
 }

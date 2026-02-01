@@ -6,14 +6,29 @@ import './MenuBar.css';
 
 const DEFAULT_ENTITY = 'celebria';
 
+const siteSwitch = (import.meta.env.VITE_SITE_SWITCH || 'crickipedia').toLowerCase();
+const isCelebria = siteSwitch === 'celebria';
+
 const getEntityFromPath = (pathname) => {
-  const match = pathname.match(/^\/sports\/cricket\/([^/]+)/);
-  return match ? match[1] : DEFAULT_ENTITY;
+  if (isCelebria) {
+    const match = pathname.match(/^\/sports\/cricket\/celebria(?:\/|$)/);
+    return match ? 'celebria' : DEFAULT_ENTITY;
+  }
+  const longMatch = pathname.match(/^\/sports\/cricket\/([^/]+)/);
+  if (longMatch) return longMatch[1];
+  const shortMatch = pathname.match(/^\/([^/]+)\/[^/]+/);
+  return shortMatch ? shortMatch[1] : DEFAULT_ENTITY;
+};
+
+const getBasePath = (entity) => {
+  if (isCelebria) return '/sports/cricket/celebria';
+  return `/${entity}`;
 };
 
 const MenuBar = () => {
   const location = useLocation();
   const entity = getEntityFromPath(location.pathname);
+  const basePath = getBasePath(entity);
   const [cohorts, setCohorts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -26,9 +41,9 @@ const MenuBar = () => {
   }, [entity]);
 
   const cohortMenus = [
-    { key: 'statboard', label: 'Statboard', basePath: `/sports/cricket/${entity}` },
-    { key: 'profile', label: 'Profile', basePath: `/sports/cricket/${entity}` },
-    { key: 'rules', label: 'Rules', basePath: `/sports/cricket/${entity}` },
+    { key: 'statboard', label: 'Statboard', basePath },
+    { key: 'profile', label: 'Profile', basePath },
+    { key: 'rules', label: 'Rules', basePath },
   ];
 
   const getCohortPath = (menu, cohort) => {
@@ -39,13 +54,15 @@ const MenuBar = () => {
   };
 
   const isMenuActive = (menu) => {
+    const path = location.pathname;
+    const entityPrefix = isCelebria ? '/sports/cricket/celebria/' : `/${entity}/`;
     if (menu.key === 'statboard') {
-      return location.pathname.startsWith(`/sports/cricket/${entity}/`) &&
-        !location.pathname.endsWith('/profile') &&
-        !location.pathname.endsWith('/cpl_rules');
+      return path.startsWith(entityPrefix) &&
+        !path.endsWith('/profile') &&
+        !path.endsWith('/cpl_rules');
     }
-    if (menu.key === 'profile') return location.pathname.endsWith('/profile');
-    if (menu.key === 'rules') return location.pathname.endsWith('/cpl_rules');
+    if (menu.key === 'profile') return path.endsWith('/profile');
+    if (menu.key === 'rules') return path.endsWith('/cpl_rules');
     return false;
   };
 

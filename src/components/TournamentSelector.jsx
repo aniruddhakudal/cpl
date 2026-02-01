@@ -11,9 +11,9 @@ const capitalizeAll = (str) => {
 
 const TournamentSelector = ({ onTournamentChange, entity: propEntity, cohort: propCohort }) => {
   const params = useParams();
-  // Use props if provided, otherwise get from URL params
-  const entity = propEntity || params.entity;
-  const cohort = propCohort || params.cohort;
+  // Use props if provided, otherwise get from URL params (both must be defined for fetch)
+  const entity = propEntity ?? params.entity ?? '';
+  const cohort = propCohort ?? params.cohort ?? '';
   const [tournaments, setTournaments] = useState([]);
   const [selectedTournament, setSelectedTournament] = useState('ALL');
   const [loading, setLoading] = useState(false);
