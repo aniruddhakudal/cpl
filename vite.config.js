@@ -10,20 +10,23 @@ const handleWatcherErrors = () => {
   return {
     name: 'handle-watcher-errors',
     configureServer(server) {
-      // Suppress file watcher errors
-      process.on('uncaughtException', (error) => {
+      // Additional error handling in server context
+      server.ws.on('error', (error) => {
         if (error.code === 'EINVAL' && error.path && error.path.includes('DumpStack.log.tmp')) {
           console.warn('Ignoring file watcher error for system file:', error.path)
           return
         }
-        throw error
       })
     }
   }
 }
 
 export default defineConfig({
-  plugins: [react(), handleWatcherErrors()],
+  plugins: [
+    react({ jsxRuntime: 'automatic' }),
+    //react({ jsxRuntime: 'automatic' }),
+    handleWatcherErrors()
+  ],
   root: __dirname,
   build: {
     outDir: 'dist',
@@ -32,6 +35,9 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    hmr: {
+      overlay: true
+    },
     watch: {
       usePolling: true,
       interval: 1000,
@@ -41,10 +47,18 @@ export default defineConfig({
         '**/dist/**',
         '**/DumpStack.log.tmp',
         '**/*.tmp',
+        'C:/DumpStack.log.tmp',
+        'C:\\DumpStack.log.tmp',
+        'vite.config.js', // Ignore vite.config.js changes to prevent reload issues
         (filePath) => {
           // Ignore anything at the root of C: drive (outside Users directory)
           const normalized = filePath.replace(/\\/g, '/')
+          // Match C:/filename (root level files)
           if (normalized.match(/^C:\/[^/]+$/)) {
+            return true
+          }
+          // Match C:\filename (Windows path format)
+          if (filePath.match(/^C:\\(DumpStack|hiberfil|pagefile|swapfile)/)) {
             return true
           }
           // Ignore system temp files

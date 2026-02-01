@@ -1,14 +1,16 @@
 .rules-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-primary);
   padding-bottom: 2rem;
+  transition: background 0.3s ease;
 }
 
 .rules-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-secondary);
   padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   margin-bottom: 2rem;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .rules-header-content {
@@ -27,9 +29,10 @@
 
 .rules-title {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
   font-weight: 700;
+  transition: color 0.3s ease;
 }
 
 .rules-controls {
@@ -46,19 +49,35 @@
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  border: 2px solid white;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
 }
 
 .rules-control-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Light theme: ensure buttons stay clearly visible */
+:root[data-theme='light'] .rules-control-btn,
+:root:not([data-theme]) .rules-control-btn {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: var(--bg-card);
+}
+
+:root[data-theme='light'] .rules-control-btn:hover,
+:root:not([data-theme]) .rules-control-btn:hover {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border-color: var(--accent-primary);
 }
 
 .rules-content {
@@ -68,62 +87,71 @@
 }
 
 .rule-item {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   border-radius: 12px;
   margin-bottom: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
 .rule-item:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .rule-header {
   width: 100%;
   padding: 1.5rem;
-  background: white;
+  background: var(--bg-secondary);
   border: none;
   text-align: left;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .rule-header:hover {
-  background: #f8f9fa;
+  background: var(--bg-hover);
 }
 
 .rule-header.expanded {
-  background: #f0f4ff;
-  border-bottom: 2px solid #667eea;
+  background: var(--bg-hover);
+  border-bottom: 2px solid var(--accent-primary);
 }
 
 .rule-number {
-  color: #667eea;
+  color: var(--accent-primary);
   font-weight: 700;
   min-width: 80px;
   font-size: 1rem;
+  transition: color 0.3s ease;
 }
 
 .rule-title {
   flex: 1;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .rule-toggle-icon {
-  color: #667eea;
-  font-size: 0.9rem;
-  transition: transform 0.3s ease;
-  min-width: 20px;
+  color: var(--accent-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  transition: transform 0.3s ease, color 0.3s ease;
+  min-width: 24px;
   text-align: center;
+}
+
+/* Light theme: darker arrow for better contrast on rule headers */
+:root[data-theme='light'] .rule-toggle-icon,
+:root:not([data-theme]) .rule-toggle-icon {
+  color: var(--accent-hover);
 }
 
 .rule-header.expanded .rule-toggle-icon {
@@ -132,8 +160,9 @@
 
 .rule-content {
   padding: 0 1.5rem 1.5rem 1.5rem;
-  background: white;
+  background: var(--bg-secondary);
   animation: slideDown 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 @keyframes slideDown {
@@ -149,16 +178,18 @@
 
 .rule-body {
   padding-top: 1rem;
-  color: #555;
+  color: var(--text-secondary);
   line-height: 1.8;
   font-size: 1rem;
+  transition: color 0.3s ease;
 }
 
 /* Style HTML elements within rule body */
 .rule-body p {
   margin: 0.75rem 0;
-  color: #555;
+  color: var(--text-secondary);
   line-height: 1.8;
+  transition: color 0.3s ease;
 }
 
 .rule-body p:first-child {
@@ -182,7 +213,8 @@
 .rule-body ol {
   margin: 1rem 0;
   padding-left: 2rem;
-  color: #555;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
 }
 
 .rule-body li {
@@ -193,7 +225,8 @@
 .rule-body strong,
 .rule-body b {
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 .rule-body em,
@@ -208,9 +241,10 @@
 .rule-body h5,
 .rule-body h6 {
   margin: 1.5rem 0 1rem 0;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 700;
   line-height: 1.4;
+  transition: color 0.3s ease;
 }
 
 .rule-body h1 {
@@ -248,33 +282,37 @@
 }
 
 .rule-body table th {
-  background-color: #f8f9fa;
+  background-color: var(--disabled-bg);
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .rule-body blockquote {
   margin: 1rem 0;
   padding-left: 1.5rem;
-  border-left: 4px solid #667eea;
-  color: #666;
+  border-left: 4px solid var(--accent-primary);
+  color: var(--text-secondary);
   font-style: italic;
+  transition: border-color 0.3s ease, color 0.3s ease;
 }
 
 .rule-body code {
-  background-color: #f4f4f4;
+  background-color: var(--disabled-bg);
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   font-family: 'Courier New', monospace;
   font-size: 0.9em;
+  transition: background-color 0.3s ease;
 }
 
 .rule-body pre {
-  background-color: #f4f4f4;
+  background-color: var(--disabled-bg);
   padding: 1rem;
   border-radius: 8px;
   overflow-x: auto;
   margin: 1rem 0;
+  transition: background-color 0.3s ease;
 }
 
 .rule-body pre code {
@@ -284,12 +322,13 @@
 
 .no-rules {
   text-align: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: 1.2rem;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   backdrop-filter: blur(10px);
+  transition: color 0.3s ease;
 }
 
 .rules-loading-container,
@@ -299,9 +338,10 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  color: white;
+  color: var(--text-inverse);
   text-align: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-primary);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .rules-error-container h2 {

@@ -161,4 +161,3 @@ const parseRulesFromHtml = (html) => {
   
   return rules;
 };
-

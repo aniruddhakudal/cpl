@@ -1,19 +1,135 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg-primary);
+  transition: background 0.3s ease;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+}
+
+.profile-page {
+  padding: 2rem;
+  text-align: center;
+  min-height: 50vh;
+}
+
+.profile-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.profile-page p {
+  color: var(--text-secondary);
+}
+
+.profile-page__subtitle {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.profile-page__selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.profile-page__selector label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-page__selector .selector-dropdown {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 220px;
+  max-width: 100%;
+}
+
+.profile-page__selector .selector-dropdown:hover:not(:disabled) {
+  border-color: var(--border-color-hover);
+}
+
+.profile-page__selector .selector-dropdown:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.profile-page__empty {
+  margin-top: 1rem;
+}
+
+.profile-page__content {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-page__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+  padding: 0 1rem;
+  transition: color 0.3s ease;
+}
+
+.home-page__subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin: 0.5rem 0 0;
+  text-align: center;
+  padding: 0 1rem;
+}
+
 .app {
   min-height: 100vh;
 }
 
 .app-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-secondary);
   padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   text-align: center;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
 .app-header h1 {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   font-weight: 700;
+  transition: color 0.3s ease;
 }
 
 .season-selector {
@@ -27,24 +143,24 @@
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  border: 2px solid #667eea;
-  background: white;
-  color: #667eea;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .season-selector button:hover {
-  background: #667eea;
-  color: white;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .season-selector button.active {
-  background: #667eea;
-  color: white;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
@@ -55,8 +171,9 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  color: white;
+  color: var(--text-inverse);
   text-align: center;
+  transition: color 0.3s ease;
 }
 
 .spinner {

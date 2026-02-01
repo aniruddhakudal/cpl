@@ -1,112 +1,78 @@
-import { Routes, Route } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { getAllSeasonsData } from './utils/dataLoader';
-import Dashboard from './components/Dashboard';
+import { Routes, Route, useParams, Navigate } from 'react-router-dom';
+import MenuBar from './components/MenuBar';
 import CPLRulesPage from './pages/CPLRulesPage';
+import StatsPage from './pages/StatsPage';
+import ProfilePage from './pages/ProfilePage';
+import CelebriaHomePage from './pages/CelebriaHomePage';
+import CrickipediaHomePage from './pages/CrickipediaHomePage';
 import './App.css';
 
-function PlaceholderPage() {
-  return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#f5f5f5'
-    }}>
-      <img
-        src="https://via.placeholder.com/800x600/667eea/ffffff?text=Placeholder+Image"
-        alt="Placeholder"
-        style={{
-          maxWidth: '90%',
-          height: 'auto',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        }}
-      />
-    </div>
-  );
-}
+// site_switch: set via env VITE_SITE_SWITCH = "celebria" | "crickipedia"
+const siteSwitch = (import.meta.env.VITE_SITE_SWITCH || 'crickipedia').toLowerCase();
+const isCelebria = siteSwitch === 'celebria';
+const HomePage = isCelebria ? CelebriaHomePage : CrickipediaHomePage;
 
-function DashboardPage() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedSeason, setSelectedSeason] = useState('cpl1');
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const allData = await getAllSeasonsData();
-        setData(allData);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load data. Please ensure the data files are accessible.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Loading tournament data...</p>
-      </div>
-    );
+// When site_switch=celebria, hide /sports/cricket/:entity pages where entity !== "celebria" (redirect to home)
+function RedirectIfNotCelebria({ children }) {
+  const { entity } = useParams();
+  if (entity && entity.toLowerCase() !== 'celebria') {
+    return <Navigate to="/" replace />;
   }
-
-  if (error) {
-    return (
-      <div className="error-container">
-        <h2>Error</h2>
-        <p>{error}</p>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return null;
-  }
-
-  return (
-    <div className="app">
-      <header className="app-header">
-        <h1>🏏 CPL Cricket Tournament Dashboard</h1>
-        <div className="season-selector">
-          <button
-            className={selectedSeason === 'cpl1' ? 'active' : ''}
-            onClick={() => setSelectedSeason('cpl1')}
-          >
-            Season 1 (CPL1)
-          </button>
-          <button
-            className={selectedSeason === 'cpl2' ? 'active' : ''}
-            onClick={() => setSelectedSeason('cpl2')}
-          >
-            Season 2 (CPL2)
-          </button>
-        </div>
-      </header>
-      <Dashboard data={data[selectedSeason]} season={selectedSeason} />
-    </div>
-  );
+  return children;
 }
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<PlaceholderPage />} />
-      <Route path="/sports/cricket/adults/dashboard" element={<DashboardPage />} />
-      <Route path="/sports/cricket/adults/cpl_rules" element={<CPLRulesPage />} />
-    </Routes>
+    <div className="app-layout">
+      <MenuBar />
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+
+          {isCelebria ? (
+            <>
+              <Route
+                path="/sports/cricket/:entity/:cohort"
+                element={
+                  <RedirectIfNotCelebria>
+                    <StatsPage />
+                  </RedirectIfNotCelebria>
+                }
+              />
+              <Route
+                path="/sports/cricket/:entity/:cohort/profile"
+                element={
+                  <RedirectIfNotCelebria>
+                    <ProfilePage />
+                  </RedirectIfNotCelebria>
+                }
+              />
+              <Route
+                path="/sports/cricket/:entity/:cohort/cpl_rules"
+                element={
+                  <RedirectIfNotCelebria>
+                    <CPLRulesPage />
+                  </RedirectIfNotCelebria>
+                }
+              />
+            </>
+          ) : (
+            <>
+              <Route path="/sports/cricket/:entity/:cohort" element={<StatsPage />} />
+              <Route path="/sports/cricket/:entity/:cohort/profile" element={<ProfilePage />} />
+              <Route path="/sports/cricket/:entity/:cohort/cpl_rules" element={<CPLRulesPage />} />
+              <Route path="/:entity/:cohort" element={<StatsPage />} />
+              <Route path="/:entity/:cohort/profile" element={<ProfilePage />} />
+              <Route path="/:entity/:cohort/cpl_rules" element={<CPLRulesPage />} />
+            </>
+          )}
+        </Routes>
+      </main>
+    </div>
   );
 }
 
 export default App;
+export { siteSwitch, isCelebria };
 
