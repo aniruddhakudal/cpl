@@ -3,10 +3,23 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ScatterChart, Scatter, Cell, LineChart, Line
 } from 'recharts';
+import { useTheme } from '../../contexts/ThemeContext';
 import ChartCard from '../ChartCard';
 import SliderChart from './SliderChart';
 
 const BowlingCharts = ({ data }) => {
+  const { theme } = useTheme();
+  
+  const tooltipStyle = {
+    backgroundColor: theme === 'dark' ? 'rgba(30, 30, 46, 0.98)' : 'rgba(255, 255, 255, 0.95)',
+    padding: '10px',
+    border: theme === 'dark' ? '1px solid #667eea' : '1px solid #ccc',
+    borderRadius: '4px',
+    zIndex: 1000,
+    position: 'relative',
+    color: theme === 'dark' ? '#e0e0e0' : '#333'
+  };
+  
   const topWicketTakers = useMemo(() => {
     return [...data]
       .filter(p => p.total_wickets > 0)
@@ -113,15 +126,10 @@ const BowlingCharts = ({ data }) => {
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{payload[0].payload.fullName}</p>
-                      <p>Team: {payload[0].payload.team}</p>
-                      <p>Wickets: {payload[0].value}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{payload[0].payload.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {payload[0].payload.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Wickets: {payload[0].value}</p>
                     </div>
                   );
                 }
@@ -156,17 +164,12 @@ const BowlingCharts = ({ data }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.name}</p>
-                      <p>Team: {data.team}</p>
-                      <p>Economy: {data.economy}</p>
-                      <p>Wickets: {data.wickets}</p>
-                      <p>Average: {data.average.toFixed(2)}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.name}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {data.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Economy: {data.economy}</p>
+                      <p style={{ color: tooltipStyle.color }}>Wickets: {data.wickets}</p>
+                      <p style={{ color: tooltipStyle.color }}>Average: {data.average.toFixed(2)}</p>
                     </div>
                   );
                 }
@@ -193,15 +196,10 @@ const BowlingCharts = ({ data }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
-                      <p>Team: {data.team}</p>
-                      <p>Best: {data.wickets}/{data.runs}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {data.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Best: {data.wickets}/{data.runs}</p>
                     </div>
                   );
                 }
@@ -224,15 +222,10 @@ const BowlingCharts = ({ data }) => {
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{payload[0].payload.fullName}</p>
-                      <p>Team: {payload[0].payload.team}</p>
-                      <p>Economy: {payload[0].value}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{payload[0].payload.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {payload[0].payload.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Economy: {payload[0].value}</p>
                     </div>
                   );
                 }
@@ -256,16 +249,11 @@ const BowlingCharts = ({ data }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px'
-                    }}>
-                      <p style={{ fontWeight: 'bold' }}>{data.fullName}</p>
-                      <p>Team: {data.team}</p>
-                      <p>Average: {data.average}</p>
-                      <p>Wickets: {data.wickets}</p>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.fullName}</p>
+                      <p style={{ color: tooltipStyle.color }}>Team: {data.team}</p>
+                      <p style={{ color: tooltipStyle.color }}>Average: {data.average}</p>
+                      <p style={{ color: tooltipStyle.color }}>Wickets: {data.wickets}</p>
                     </div>
                   );
                 }
@@ -284,7 +272,20 @@ const BowlingCharts = ({ data }) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload;
+                  return (
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', color: tooltipStyle.color }}>{data.name}</p>
+                      <p style={{ color: tooltipStyle.color }}>Total Wickets: {data.wickets}</p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
             <Legend />
             <Bar dataKey="wickets" fill="#43e97b" name="Total Wickets" />
           </BarChart>

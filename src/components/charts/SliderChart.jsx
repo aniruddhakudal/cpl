@@ -2,12 +2,25 @@ import { useState, useMemo } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import { useTheme } from '../../contexts/ThemeContext';
 import ChartCard from '../ChartCard';
 import './SliderChart.css';
 
 const SliderChart = ({ data, title, dataKey, sortKey, color = '#667eea', label = 'Value' }) => {
+  const { theme } = useTheme();
   const [sliderValue, setSliderValue] = useState(10);
   const maxPlayers = Math.min(data.length, 30);
+  
+  const tooltipStyle = {
+    backgroundColor: theme === 'dark' ? 'rgba(30, 30, 46, 0.98)' : 'rgba(255, 255, 255, 0.95)',
+    padding: '10px',
+    border: theme === 'dark' ? '1px solid #667eea' : '1px solid #ccc',
+    borderRadius: '4px',
+    boxShadow: theme === 'dark' ? '0 2px 8px rgba(0,0,0,0.5)' : '0 2px 8px rgba(0,0,0,0.1)',
+    zIndex: 1000,
+    position: 'relative',
+    color: theme === 'dark' ? '#e0e0e0' : '#333'
+  };
 
   const filteredData = useMemo(() => {
     return [...data]
@@ -59,18 +72,12 @@ const SliderChart = ({ data, title, dataKey, sortKey, color = '#667eea', label =
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }}>
-                      <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                    <div style={tooltipStyle}>
+                      <p style={{ fontWeight: 'bold', marginBottom: '5px', color: tooltipStyle.color }}>
                         {payload[0].payload.fullName}
                       </p>
-                      <p style={{ margin: '2px 0' }}>Team: {payload[0].payload.team}</p>
-                      <p style={{ margin: '2px 0', fontWeight: '600' }}>
+                      <p style={{ margin: '2px 0', color: tooltipStyle.color }}>Team: {payload[0].payload.team}</p>
+                      <p style={{ margin: '2px 0', fontWeight: '600', color: tooltipStyle.color }}>
                         {label}: {payload[0].value}
                       </p>
                     </div>
