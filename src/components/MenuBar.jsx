@@ -9,11 +9,22 @@ const DEFAULT_ENTITY = 'celebria';
 const siteSwitch = (import.meta.env.VITE_SITE_SWITCH || 'crickipedia').toLowerCase();
 const isCelebria = siteSwitch === 'celebria';
 
+const ENTITY_PAGES = ['shankeshwaram', 'shiroli', 'celebria'];
+
+const TOURNAMENT_ITEMS = [
+  { label: 'Celebria', path: '/celebria' },
+  { label: 'Shankeshwaram', path: '/shankeshwaram' },
+  { label: 'Shiroli', path: '/shiroli' },
+];
+
 const getEntityFromPath = (pathname) => {
   if (isCelebria) {
     const match = pathname.match(/^\/sports\/cricket\/celebria(?:\/|$)/);
     return match ? 'celebria' : DEFAULT_ENTITY;
   }
+  // Entity landing pages: /shankeshwaram, /shiroli, /celebria
+  const entityPageMatch = pathname.match(new RegExp(`^/(${ENTITY_PAGES.join('|')})(?:/|$)`));
+  if (entityPageMatch) return entityPageMatch[1];
   const longMatch = pathname.match(/^\/sports\/cricket\/([^/]+)/);
   if (longMatch) return longMatch[1];
   const shortMatch = pathname.match(/^\/([^/]+)\/[^/]+/);
@@ -53,6 +64,13 @@ const MenuBar = () => {
     return menu.basePath;
   };
 
+  const isCrickipedia = !isCelebria;
+
+  const isTournamentsActive = () => {
+    const path = location.pathname;
+    return ENTITY_PAGES.some((e) => path === `/${e}` || path.startsWith(`/${e}/`));
+  };
+
   const isMenuActive = (menu) => {
     const path = location.pathname;
     const entityPrefix = isCelebria ? '/sports/cricket/celebria/' : `/${entity}/`;
@@ -68,7 +86,15 @@ const MenuBar = () => {
 
   return (
     <nav className="menu-bar">
-      <div className="menu-bar__brand">Crickipedia Stats</div>
+      <div className="menu-bar__brand">
+        <NavLink to="/" className="menu-bar__brand-link" aria-label="Crickipedia Stats - Home">
+          <img
+            src="/data/images/crickipedia/crickipedia_button1.png"
+            alt="Crickipedia Stats"
+            className="menu-bar__brand-img"
+          />
+        </NavLink>
+      </div>
       <ul className="menu-bar__items">
         <li>
           <NavLink
@@ -81,6 +107,46 @@ const MenuBar = () => {
             Home
           </NavLink>
         </li>
+        {isCrickipedia ? (
+          <li
+            className="menu-bar__dropdown"
+            onMouseEnter={() => setOpenDropdown('tournaments')}
+            onMouseLeave={() => setOpenDropdown(null)}
+          >
+            <button
+              type="button"
+              className={`menu-bar__link menu-bar__link--trigger ${
+                isTournamentsActive() ? 'menu-bar__link--active' : ''
+              }`}
+              onClick={() => setOpenDropdown((prev) => (prev === 'tournaments' ? null : 'tournaments'))}
+              aria-expanded={openDropdown === 'tournaments'}
+              aria-haspopup="true"
+            >
+              Tournaments
+            </button>
+            <ul
+              className={`menu-bar__dropdown-list ${
+                openDropdown === 'tournaments' ? 'menu-bar__dropdown-list--open' : ''
+              }`}
+            >
+              {TOURNAMENT_ITEMS.map((item) => (
+                <li key={item.path}>
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `menu-bar__dropdown-link ${
+                        isActive ? 'menu-bar__dropdown-link--active' : ''
+                      }`
+                    }
+                    onClick={() => setOpenDropdown(null)}
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ) : null}
         {cohortMenus.map((menu) => {
           const firstCohort = cohorts[0];
           const defaultCohort = firstCohort
@@ -96,13 +162,17 @@ const MenuBar = () => {
             onMouseLeave={() => setOpenDropdown(null)}
           >
             {hasCohorts ? (
-              <span
+              <button
+                type="button"
                 className={`menu-bar__link menu-bar__link--trigger ${
                   isMenuActive(menu) ? 'menu-bar__link--active' : ''
                 }`}
+                onClick={() => setOpenDropdown((prev) => (prev === menu.key ? null : menu.key))}
+                aria-expanded={openDropdown === menu.key}
+                aria-haspopup="true"
               >
                 {menu.label}
-              </span>
+              </button>
             ) : (
               <NavLink
                 to={defaultPath}

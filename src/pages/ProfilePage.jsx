@@ -1,58 +1,84 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import './ProfilePage.css';
 import '../App.css';
 
 const API_BASE = 'https://cpl-backend-h9oc.onrender.com';
 
-const fetchCategories = async (entity, cohort) => {
+// Simple cache for player details (5 min TTL, max 50 entries)
+const detailsCache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_MAX_SIZE = 50;
+
+const getCacheKey = (playerId, entity, cohort, categoryFilter, seasonFilter) =>
+  `${playerId}|${entity}|${cohort}|${categoryFilter ?? ''}|${seasonFilter ?? ''}`;
+
+const pruneCache = () => {
+  const now = Date.now();
+  for (const [k, v] of detailsCache.entries()) {
+    if (now - v.ts > CACHE_TTL_MS) detailsCache.delete(k);
+  }
+  while (detailsCache.size > CACHE_MAX_SIZE) {
+    const oldest = [...detailsCache.entries()].sort((a, b) => a[1].ts - b[1].ts)[0];
+    if (oldest) detailsCache.delete(oldest[0]);
+  }
+};
+
+const fetchCategories = async (entity, cohort, signal) => {
   if (!entity || !cohort) return [];
   try {
     const url = `${API_BASE}/v1/sports/cricket/tournaments?field=category&entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
     const values = result.values ?? result.data ?? [];
     return Array.isArray(values) ? values : [];
-  } catch (error) {
-    console.error('Error fetching categories:', error);
+  } catch (e) {
+    if (e.name === 'AbortError') return [];
+    console.error('Error fetching categories:', e);
     return [];
   }
 };
 
-const fetchSeasons = async (entity, cohort, category) => {
+const fetchSeasons = async (entity, cohort, category, signal) => {
   if (!entity || !cohort || !category) return [];
   try {
     const url = `${API_BASE}/v1/sports/cricket/tournaments?field=season&entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}&category=${encodeURIComponent(category)}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
     const values = result.values ?? result.data ?? [];
     return Array.isArray(values) ? values : [];
-  } catch (error) {
-    console.error('Error fetching seasons:', error);
+  } catch (e) {
+    if (e.name === 'AbortError') return [];
+    console.error('Error fetching seasons:', e);
     return [];
   }
 };
 
-const fetchPlayers = async (entity, cohort) => {
+const fetchPlayers = async (entity, cohort, signal) => {
   if (!entity || !cohort) return [];
   try {
     const url = `${API_BASE}/v1/sports/cricket/players?limit=0&entity=${encodeURIComponent(entity)}&cohort=${encodeURIComponent(cohort)}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
     let players = result.players ?? result.data ?? result.values ?? result;
     if (!Array.isArray(players)) players = result.data?.players ?? [];
     return Array.isArray(players) ? players : [];
-  } catch (error) {
-    console.error('Error fetching players:', error);
+  } catch (e) {
+    if (e.name === 'AbortError') return [];
+    console.error('Error fetching players:', e);
     return [];
   }
 };
 
-const fetchPlayerDetails = async (playerId, entity, cohort, categoryFilter, seasonFilter) => {
+const fetchPlayerDetails = async (playerId, entity, cohort, categoryFilter, seasonFilter, signal) => {
   if (!playerId) return null;
+  const cacheKey = getCacheKey(playerId, entity, cohort, categoryFilter, seasonFilter);
+  const cached = detailsCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < CACHE_TTL_MS) return cached.data;
+  pruneCache();
   try {
     let url = `${API_BASE}/v1/sports/cricket/players/${encodeURIComponent(playerId)}/details`;
     const params = new URLSearchParams();
@@ -61,12 +87,15 @@ const fetchPlayerDetails = async (playerId, entity, cohort, categoryFilter, seas
     if (categoryFilter && categoryFilter.trim()) params.set('category', categoryFilter.trim());
     if (seasonFilter && seasonFilter.trim()) params.set('season', seasonFilter.trim());
     if (params.toString()) url += `?${params.toString()}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
-    return result.profile ? result : (result.details ?? result.data ?? result);
-  } catch (error) {
-    console.error('Error fetching player details:', error);
+    const data = result.profile ? result : (result.details ?? result.data ?? result);
+    detailsCache.set(cacheKey, { data, ts: Date.now() });
+    return data;
+  } catch (e) {
+    if (e.name === 'AbortError') return null;
+    console.error('Error fetching player details:', e);
     return null;
   }
 };
@@ -162,68 +191,91 @@ const ProfilePage = () => {
       setPlayerDetails(null);
       return;
     }
-    const loadCategories = async () => {
-      const data = await fetchCategories(entity, cohort);
-      setCategories(data);
-      setSelectedCategories(data);
-    };
-    loadCategories();
-  }, [entity, cohort]);
-
-  useEffect(() => {
-    if (!entity || !cohort) return;
+    const ac = new AbortController();
     const load = async () => {
       setLoading(true);
-      const data = await fetchPlayers(entity, cohort);
-      setPlayers(data);
-      const first = data.length > 0 ? data[0] : null;
-      setSelectedPlayer(first ? getPlayerValue(first) : '');
-      setSelectedPlayerName(first ? getPlayerLabel(first) ?? '' : '');
-      setPlayerDetails(null);
-      setLoading(false);
+      try {
+        const [categoriesData, playersData] = await Promise.all([
+          fetchCategories(entity, cohort, ac.signal),
+          fetchPlayers(entity, cohort, ac.signal),
+        ]);
+        if (!ac.signal.aborted) {
+          setCategories(categoriesData);
+          setSelectedCategories(categoriesData);
+          setPlayers(playersData);
+          setSelectedPlayer('');
+          setSelectedPlayerName('');
+          setPlayerDetails(null);
+        }
+      } finally {
+        if (!ac.signal.aborted) setLoading(false);
+      }
     };
     load();
+    return () => ac.abort();
   }, [entity, cohort]);
 
   useEffect(() => {
-    if (selectedCategories.length !== 1) {
+    if (selectedCategories.length !== 1 || !entity || !cohort) {
       setSeasons([]);
       setSelectedSeasons([]);
       return;
     }
     const category = selectedCategories[0];
+    const ac = new AbortController();
     const load = async () => {
-      const data = await fetchSeasons(entity, cohort, category);
-      setSeasons(data);
-      setSelectedSeasons([]);
+      const data = await fetchSeasons(entity, cohort, category, ac.signal);
+      if (!ac.signal.aborted) {
+        setSeasons(data);
+        setSelectedSeasons([]);
+      }
     };
     load();
+    return () => ac.abort();
   }, [entity, cohort, selectedCategories]);
 
+  const detailsAbortRef = useRef(null);
   useEffect(() => {
     if (!selectedPlayer) {
       setPlayerDetails(null);
       return;
     }
+    if (detailsAbortRef.current) detailsAbortRef.current.abort();
+    const ac = new AbortController();
+    detailsAbortRef.current = ac;
     const categoryFilter = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
     const seasonFilter =
       selectedCategories.length === 1 && selectedSeasons.length > 0 ? selectedSeasons.join(',') : '';
-    const load = async () => {
-      setDetailsLoading(true);
-      const data = await fetchPlayerDetails(
-        selectedPlayer,
-        entity,
-        cohort,
-        categoryFilter,
-        seasonFilter
-      );
-      setPlayerDetails(data);
-      setDetailsLoading(false);
+    setDetailsLoading(true);
+    fetchPlayerDetails(
+      selectedPlayer,
+      entity,
+      cohort,
+      categoryFilter,
+      seasonFilter,
+      ac.signal
+    ).then((data) => {
+      if (!ac.signal.aborted) {
+        setPlayerDetails(data);
+      }
+    }).finally(() => {
+      if (!ac.signal.aborted) setDetailsLoading(false);
+    });
+    return () => {
+      ac.abort();
+      detailsAbortRef.current = null;
     };
-    load();
   }, [selectedPlayer, entity, cohort, selectedCategories, selectedSeasons]);
 
   const hasParams = Boolean(entity && cohort);
+
+  const sortedPlayers = useMemo(
+    () =>
+      [...players].sort((a, b) =>
+        (getPlayerLabel(a) ?? '').localeCompare(getPlayerLabel(b) ?? '', undefined, { sensitivity: 'base' })
+      ),
+    [players]
+  );
 
   if (!hasParams) {
     return (
@@ -336,9 +388,7 @@ const ProfilePage = () => {
           disabled={players.length === 0}
         >
           <option value="">Select a player</option>
-          {[...players]
-            .sort((a, b) => (getPlayerLabel(a) ?? '').localeCompare(getPlayerLabel(b) ?? '', undefined, { sensitivity: 'base' }))
-            .map((player) => (
+          {sortedPlayers.map((player) => (
               <option key={getPlayerValue(player)} value={getPlayerValue(player)}>
                 {getPlayerLabel(player) ?? getPlayerValue(player)}
               </option>

@@ -93,6 +93,14 @@
   margin-right: auto;
 }
 
+.home-page__logo {
+  display: block;
+  height: 140px;
+  width: auto;
+  margin: 0 auto 1.5rem;
+  object-fit: contain;
+}
+
 .home-page__title {
   font-size: 2.5rem;
   font-weight: 700;
@@ -109,6 +117,17 @@
   margin: 0.5rem 0 0;
   text-align: center;
   padding: 0 1rem;
+}
+
+.home-page__welcome {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 2rem 0 0;
+  text-align: center;
+  padding: 0 2rem;
+  max-width: 560px;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 .app {

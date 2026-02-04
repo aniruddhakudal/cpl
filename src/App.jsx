@@ -5,6 +5,9 @@ import StatsPage from './pages/StatsPage';
 import ProfilePage from './pages/ProfilePage';
 import CelebriaHomePage from './pages/CelebriaHomePage';
 import CrickipediaHomePage from './pages/CrickipediaHomePage';
+import ShankeshwaramPage from './pages/ShankeshwaramPage';
+import ShiroliPage from './pages/ShiroliPage';
+import CelebriaEntityPage from './pages/CelebriaEntityPage';
 import './App.css';
 
 // site_switch: set via env VITE_SITE_SWITCH = "celebria" | "crickipedia"
@@ -59,6 +62,9 @@ function App() {
             </>
           ) : (
             <>
+              <Route path="/shankeshwaram" element={<ShankeshwaramPage />} />
+              <Route path="/shiroli" element={<ShiroliPage />} />
+              <Route path="/celebria" element={<CelebriaEntityPage />} />
               <Route path="/sports/cricket/:entity/:cohort" element={<StatsPage />} />
               <Route path="/sports/cricket/:entity/:cohort/profile" element={<ProfilePage />} />
               <Route path="/sports/cricket/:entity/:cohort/cpl_rules" element={<CPLRulesPage />} />

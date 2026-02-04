@@ -1,0 +1,179 @@
+.shankeshwaram-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.shankeshwaram-page > .shankeshwaram-hero {
+  margin: auto;
+}
+
+.shankeshwaram-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(99, 102, 241, 0.08) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+.shankeshwaram-hero {
+  text-align: center;
+  max-width: 720px;
+  position: relative;
+  z-index: 1;
+}
+
+.shankeshwaram-presents {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 2rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.shankeshwaram-logo-wrap {
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card), 0 0 0 1px rgba(99, 102, 241, 0.1);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.2s forwards;
+}
+
+.shankeshwaram-logo-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 26px;
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    var(--accent-primary),
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.shankeshwaram-logo {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.shankeshwaram-section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 3rem 0 1.5rem;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.4s forwards;
+}
+
+.shankeshwaram-sponsors-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.45s forwards;
+}
+
+.shankeshwaram-sponsor-img {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  object-fit: contain;
+}
+
+.shankeshwaram-section-title--teams {
+  animation: fadeInUp 0.8s ease 0.5s forwards;
+}
+
+.shankeshwaram-banner-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.55s forwards;
+}
+
+.shankeshwaram-banner {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  margin: 0 auto;
+  vertical-align: middle;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .shankeshwaram-presents {
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+  }
+
+  .shankeshwaram-logo-wrap {
+    padding: 1.5rem;
+  }
+
+  .shankeshwaram-logo {
+    max-width: 520px;
+  }
+
+  .shankeshwaram-section-title {
+    font-size: 1.35rem;
+    margin: 2rem 0 1rem;
+  }
+
+  .shankeshwaram-sponsors-wrap {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .shankeshwaram-sponsor-img {
+    max-width: 100%;
+  }
+}
