@@ -14,6 +14,8 @@ const rootDir = path.resolve(__dirname, '..');
 const docxPath = path.join(rootDir, 'data', 'CPL_RULE_BOOK.docx');
 const docxPathPublic = path.join(rootDir, 'public', 'data', 'CPL_RULE_BOOK.docx');
 const outputPath = path.join(rootDir, 'public', 'data', 'CPL_RULES.json');
+const cplLogoSrc = path.join(rootDir, 'data', 'cpl_logo.png');
+const cplLogoDest = path.join(rootDir, 'public', 'data', 'cpl_logo.png');
 
 function parseRulesFromHtml(html) {
   const dom = new JSDOM(html);
@@ -114,6 +116,15 @@ function parseRulesFromHtml(html) {
 }
 
 async function convert() {
+  if (fs.existsSync(cplLogoSrc)) {
+    const publicDataDir = path.dirname(cplLogoDest);
+    if (!fs.existsSync(publicDataDir)) {
+      fs.mkdirSync(publicDataDir, { recursive: true });
+    }
+    fs.copyFileSync(cplLogoSrc, cplLogoDest);
+    console.log('Copied cpl_logo.png to public/data/');
+  }
+
   const inputPath = fs.existsSync(docxPath) ? docxPath : docxPathPublic;
   if (!fs.existsSync(inputPath)) {
     console.error('CPL_RULE_BOOK.docx not found at', docxPath, 'or', docxPathPublic);
