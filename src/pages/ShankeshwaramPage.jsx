@@ -4,7 +4,10 @@ const ShankeshwaramPage = () => {
   return (
     <div className="shankeshwaram-page">
       <div className="shankeshwaram-hero">
-        <p className="shankeshwaram-presents">"Shankeshwaram Residency" presents</p>
+        <div className="shankeshwaram-presents">
+        <p>Shankeshwaram Residency</p>
+        <p>presents</p>
+      </div>
         <div className="shankeshwaram-logo-wrap">
           <img
             src="/data/images/shankeshwaram/srpl_logo.png"
@@ -20,18 +23,18 @@ const ShankeshwaramPage = () => {
             className="shankeshwaram-sponsor-img"
           />
           <img
-            src="/data/images/shankeshwaram/srpl_2026_team.jpeg"
-            alt="SRPL 2026 Team"
-            className="shankeshwaram-sponsor-img"
-          />
+            src="/data/images/shankeshwaram/srpl_2026_banner.jpeg"
+            alt="SRPL 2026 Teams Banner"
+            className="shankeshwaram-banner"
+          />          
         </div>
         <h2 className="shankeshwaram-section-title shankeshwaram-section-title--teams">SRPL Season2 - Teams</h2>
         <div className="shankeshwaram-banner-wrap">
           <img
-            src="/data/images/shankeshwaram/srpl_2026_banner.jpeg"
-            alt="SRPL 2026 Teams Banner"
-            className="shankeshwaram-banner"
-          />
+            src="/data/images/shankeshwaram/srpl_2026_team.jpeg"
+            alt="SRPL 2026 Team"
+            className="shankeshwaram-sponsor-img"
+          />          
         </div>
       </div>
     </div>

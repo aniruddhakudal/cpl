@@ -11,6 +11,15 @@
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
+.menu-bar--centered {
+  justify-content: center;
+}
+
+.menu-bar--centered .menu-bar__actions {
+  position: absolute;
+  right: 1.5rem;
+}
+
 .menu-bar__brand {
   font-size: 1.25rem;
   font-weight: 700;
@@ -97,16 +106,19 @@
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 140px;
   margin: 0;
-  padding: 0.25rem 0;
+  margin-top: -10px;
+  padding: 1rem 0 0.25rem 0;
+  min-width: 140px;
   list-style: none;
   background: var(--bg-secondary);
   border-radius: 6px;
   box-shadow: var(--shadow);
   z-index: 200;
+  pointer-events: auto;
 }
 
+.menu-bar__dropdown:hover .menu-bar__dropdown-list,
 .menu-bar__dropdown-list--open {
   display: block;
 }

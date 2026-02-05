@@ -277,7 +277,7 @@ const StatsPage = () => {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🏏 {entity ? entity.charAt(0).toUpperCase() + entity.slice(1) : ''} {cohort ? cohort.charAt(0).toUpperCase() + cohort.slice(1) : ''} Stats</h1>
+        <h1>🏏 Cricket Stats - {entity ? entity.charAt(0).toUpperCase() + entity.slice(1) : ''} {cohort ? cohort.charAt(0).toUpperCase() + cohort.slice(1) : ''}</h1>
         <div className="selectors-container">
           <TournamentSelector 
             entity={entity}

@@ -24,6 +24,13 @@ function RedirectIfNotCelebria({ children }) {
   return children;
 }
 
+// Redirect /celebria/:cohort to /sports/cricket/celebria/:cohort when in celebria mode
+function RedirectCelebriaCohort({ suffix = '' }) {
+  const { cohort } = useParams();
+  const path = `/sports/cricket/celebria/${cohort}${suffix}`;
+  return <Navigate to={path} replace />;
+}
+
 function App() {
   return (
     <div className="app-layout">
@@ -59,6 +66,10 @@ function App() {
                   </RedirectIfNotCelebria>
                 }
               />
+              <Route path="/celebria" element={<Navigate to="/" replace />} />
+              <Route path="/celebria/:cohort" element={<RedirectCelebriaCohort />} />
+              <Route path="/celebria/:cohort/profile" element={<RedirectCelebriaCohort suffix="/profile" />} />
+              <Route path="/celebria/:cohort/cpl_rules" element={<RedirectCelebriaCohort suffix="/cpl_rules" />} />
             </>
           ) : (
             <>
@@ -73,6 +84,7 @@ function App() {
               <Route path="/:entity/:cohort/cpl_rules" element={<CPLRulesPage />} />
             </>
           )}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>

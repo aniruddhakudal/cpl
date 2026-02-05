@@ -46,6 +46,10 @@
   animation: fadeInUp 0.8s ease forwards;
 }
 
+.shankeshwaram-presents p {
+  margin: 0.25em 0;
+}
+
 .shankeshwaram-logo-wrap {
   padding: 2rem;
   background: var(--bg-secondary);
@@ -120,6 +124,8 @@
 }
 
 .shankeshwaram-banner-wrap {
+  display: flex;
+  justify-content: center;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-card);

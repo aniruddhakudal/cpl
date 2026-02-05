@@ -6,7 +6,8 @@
     "dev": "node dev-wrapper.js",
     "dev:direct": "vite",
     "dev:safe": "node vite-start.js",
-    "build": "vite build",
+    "build": "node scripts/convert-rules.js && vite build",
+    "build:rules": "node scripts/convert-rules.js",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
+    "jsdom": "^25.0.1",
     "vite": "^5.0.8"
   }
 }
