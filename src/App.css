@@ -36,9 +36,10 @@
 }
 
 .profile-page__subtitle {
-  font-size: 1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
-  opacity: 0.9;
 }
 
 .profile-page__selector {
@@ -79,6 +80,101 @@
   border-color: var(--accent-primary);
 }
 
+.player-searchable-dropdown {
+  position: relative;
+  min-width: 220px;
+  max-width: 100%;
+}
+
+.player-searchable-dropdown__trigger {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.player-searchable-dropdown__trigger::after {
+  content: '';
+  width: 0;
+  height: 0;
+  margin-left: 0.5rem;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.player-searchable-dropdown__trigger--open::after {
+  border-top: none;
+  border-bottom: 6px solid var(--text-secondary);
+}
+
+.player-searchable-dropdown__panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: var(--shadow-card);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.player-searchable-dropdown__search {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+.player-searchable-dropdown__search::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.player-searchable-dropdown__search:focus {
+  outline: none;
+}
+
+.player-searchable-dropdown__list {
+  max-height: 240px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+.player-searchable-dropdown__item {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: background 0.15s ease;
+}
+
+.player-searchable-dropdown__item:hover:not(.player-searchable-dropdown__item--empty) {
+  background: var(--bg-tertiary);
+}
+
+.player-searchable-dropdown__item--selected {
+  background: rgba(99, 102, 241, 0.15);
+  font-weight: 600;
+}
+
+.player-searchable-dropdown__item--empty {
+  cursor: default;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
 .profile-page__empty {
   margin-top: 1rem;
 }
@@ -91,6 +187,14 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.home-page__logo {
+  display: block;
+  height: 140px;
+  width: auto;
+  margin: 0 auto 1.5rem;
+  object-fit: contain;
 }
 
 .home-page__title {
@@ -109,6 +213,17 @@
   margin: 0.5rem 0 0;
   text-align: center;
   padding: 0 1rem;
+}
+
+.home-page__welcome {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 2rem 0 0;
+  text-align: center;
+  padding: 0 2rem;
+  max-width: 560px;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 .app {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import './ProfilePage.css';
 import '../App.css';
@@ -51,15 +51,14 @@ const fetchPlayers = async (entity, cohort) => {
   }
 };
 
-const fetchPlayerDetails = async (playerId, entity, cohort, categoryFilter, seasonFilter) => {
+const fetchPlayerDetails = async (playerId, entity, cohort, includeBreakdown = false) => {
   if (!playerId) return null;
   try {
     let url = `${API_BASE}/v1/sports/cricket/players/${encodeURIComponent(playerId)}/details`;
     const params = new URLSearchParams();
     if (entity) params.set('entity', entity);
     if (cohort) params.set('cohort', cohort);
-    if (categoryFilter && categoryFilter.trim()) params.set('category', categoryFilter.trim());
-    if (seasonFilter && seasonFilter.trim()) params.set('season', seasonFilter.trim());
+    if (includeBreakdown) params.set('include_breakdown', 'true');
     if (params.toString()) url += `?${params.toString()}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -69,6 +68,94 @@ const fetchPlayerDetails = async (playerId, entity, cohort, categoryFilter, seas
     console.error('Error fetching player details:', error);
     return null;
   }
+};
+
+const filterAndAggregateBreakdown = (breakdown, selectedCategories, selectedSeasons, singleCategory) => {
+  if (!breakdown || !Array.isArray(breakdown) || breakdown.length === 0) return null;
+  let filtered = breakdown;
+  if (selectedCategories && selectedCategories.length > 0) {
+    const catSet = new Set(selectedCategories.map((c) => String(c).toLowerCase()));
+    filtered = filtered.filter((b) => b.category && catSet.has(String(b.category).toLowerCase()));
+  }
+  if (singleCategory && selectedSeasons && selectedSeasons.length > 0) {
+    const seaSet = new Set(selectedSeasons.map((s) => String(s).toLowerCase()));
+    filtered = filtered.filter((b) => b.season && seaSet.has(String(b.season).toLowerCase()));
+  }
+  if (filtered.length === 0) return null;
+  const agg = { batting: {}, bowling: {}, fielding: {}, mvp: {} };
+  const sumNum = (arr, key) => arr.reduce((s, x) => s + (Number(x[key]) || 0), 0);
+  const sumF = (arr, key) => arr.reduce((s, x) => s + (parseFloat(x[key]) || 0), 0);
+  const maxNum = (arr, key) => Math.max(0, ...arr.map((x) => Number(x[key]) || 0));
+  if (filtered.some((b) => b.batting && Object.keys(b.batting).length)) {
+    const bats = filtered.map((b) => b.batting).filter(Boolean);
+    agg.batting = {
+      total_matches: sumNum(bats, 'total_matches'),
+      total_innings: sumNum(bats, 'total_innings'),
+      total_runs: sumNum(bats, 'total_runs'),
+      total_balls_faced: sumNum(bats, 'total_balls_faced'),
+      fours: sumNum(bats, 'fours'),
+      sixes: sumNum(bats, 'sixes'),
+      fifties: sumNum(bats, 'fifties'),
+      hundreds: sumNum(bats, 'hundreds'),
+      not_outs: sumNum(bats, 'not_outs'),
+      highest_score: maxNum(bats, 'highest_score'),
+      average: bats.length ? (() => {
+        const runs = sumNum(bats, 'total_runs');
+        const inn = sumNum(bats, 'total_innings') - sumNum(bats, 'not_outs');
+        return inn > 0 ? Math.round((runs / inn) * 100) / 100 : null;
+      })() : null,
+      strike_rate: (() => {
+        const runs = sumNum(bats, 'total_runs');
+        const bf = sumNum(bats, 'total_balls_faced');
+        return bf > 0 ? Math.round((runs / bf) * 10000) / 100 : null;
+      })(),
+    };
+  }
+  if (filtered.some((b) => b.bowling && Object.keys(b.bowling).length)) {
+    const bowls = filtered.map((b) => b.bowling).filter(Boolean);
+    const wickets = sumNum(bowls, 'total_wickets');
+    const runs = sumNum(bowls, 'total_runs_conceded');
+    const overs = sumF(bowls, 'total_overs');
+    agg.bowling = {
+      total_matches: sumNum(bowls, 'total_matches'),
+      total_innings: sumNum(bowls, 'total_innings'),
+      total_wickets: wickets,
+      total_balls: sumNum(bowls, 'total_balls'),
+      total_overs: Math.round(overs * 10) / 10,
+      total_runs_conceded: runs,
+      maidens: sumNum(bowls, 'maidens'),
+      dot_balls: sumNum(bowls, 'dot_balls'),
+      best_bowling_wickets: maxNum(bowls, 'best_bowling_wickets'),
+      economy: overs > 0 ? Math.round((runs / overs) * 100) / 100 : null,
+      strike_rate: wickets > 0 ? Math.round((sumNum(bowls, 'total_balls') / wickets) * 100) / 100 : null,
+      average: wickets > 0 ? Math.round((runs / wickets) * 100) / 100 : null,
+    };
+  }
+  if (filtered.some((b) => b.fielding && Object.keys(b.fielding).length)) {
+    const fiels = filtered.map((b) => b.fielding).filter(Boolean);
+    agg.fielding = {
+      total_matches: sumNum(fiels, 'total_matches'),
+      catches: sumNum(fiels, 'catches'),
+      caught_behind: sumNum(fiels, 'caught_behind'),
+      run_outs: sumNum(fiels, 'run_outs'),
+      assist_run_outs: sumNum(fiels, 'assist_run_outs'),
+      stumpings: sumNum(fiels, 'stumpings'),
+      caught_and_bowl: sumNum(fiels, 'caught_and_bowl'),
+      total_catches: sumNum(fiels, 'total_catches'),
+      total_dismissals: sumNum(fiels, 'total_dismissals'),
+    };
+  }
+  if (filtered.some((b) => b.mvp && Object.keys(b.mvp).length)) {
+    const mvps = filtered.map((b) => b.mvp).filter(Boolean);
+    agg.mvp = {
+      total_matches: sumNum(mvps, 'total_matches'),
+      batting_points: Math.round(sumF(mvps, 'batting_points') * 1000) / 1000,
+      bowling_points: Math.round(sumF(mvps, 'bowling_points') * 1000) / 1000,
+      fielding_points: Math.round(sumF(mvps, 'fielding_points') * 1000) / 1000,
+      total_points: Math.round(sumF(mvps, 'total_points') * 1000) / 1000,
+    };
+  }
+  return agg;
 };
 
 const getPlayerLabel = (player) => {
@@ -117,25 +204,16 @@ const toDisplayValue = (v) => {
   return String(v);
 };
 
-const StatCard = ({ title, icon, stats }) => (
-  <div className="player-stat-card">
-    <h3 className="player-stat-card__title">
-      <span className="player-stat-card__icon">{icon}</span>
-      {title}
-    </h3>
-    <div className="player-stat-card__grid">
-      {stats
-        .map(([label, v]) => [label, toDisplayValue(v)])
-        .filter(([, v]) => v != null && v !== '')
-        .map(([label, value]) => (
-          <div key={label} className="player-stat-card__item">
-            <span className="player-stat-card__value">{value}</span>
-            <span className="player-stat-card__label">{label}</span>
-          </div>
-        ))}
+const StatTile = ({ label, value }) => {
+  const displayValue = toDisplayValue(value);
+  if (displayValue == null || displayValue === '') return null;
+  return (
+    <div className="player-stat-tile">
+      <span className="player-stat-tile__value">{displayValue}</span>
+      <span className="player-stat-tile__label">{label}</span>
     </div>
-  </div>
-);
+  );
+};
 
 const ProfilePage = () => {
   const { entity, cohort } = useParams();
@@ -149,6 +227,9 @@ const ProfilePage = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [seasons, setSeasons] = useState([]);
   const [selectedSeasons, setSelectedSeasons] = useState([]);
+  const [playerSearchQuery, setPlayerSearchQuery] = useState('');
+  const [playerDropdownOpen, setPlayerDropdownOpen] = useState(false);
+  const playerDropdownRef = useRef(null);
 
   useEffect(() => {
     if (!entity || !cohort) {
@@ -176,9 +257,8 @@ const ProfilePage = () => {
       setLoading(true);
       const data = await fetchPlayers(entity, cohort);
       setPlayers(data);
-      const first = data.length > 0 ? data[0] : null;
-      setSelectedPlayer(first ? getPlayerValue(first) : '');
-      setSelectedPlayerName(first ? getPlayerLabel(first) ?? '' : '');
+      setSelectedPlayer('');
+      setSelectedPlayerName('');
       setPlayerDetails(null);
       setLoading(false);
     };
@@ -205,25 +285,52 @@ const ProfilePage = () => {
       setPlayerDetails(null);
       return;
     }
-    const categoryFilter = selectedCategories.length > 0 ? selectedCategories.join(',') : '';
-    const seasonFilter =
-      selectedCategories.length === 1 && selectedSeasons.length > 0 ? selectedSeasons.join(',') : '';
     const load = async () => {
       setDetailsLoading(true);
       const data = await fetchPlayerDetails(
         selectedPlayer,
         entity,
         cohort,
-        categoryFilter,
-        seasonFilter
+        true
       );
       setPlayerDetails(data);
       setDetailsLoading(false);
     };
     load();
-  }, [selectedPlayer, entity, cohort, selectedCategories, selectedSeasons]);
+  }, [selectedPlayer, entity, cohort]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (playerDropdownRef.current && !playerDropdownRef.current.contains(e.target)) {
+        setPlayerDropdownOpen(false);
+        setPlayerSearchQuery('');
+      }
+    };
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setPlayerDropdownOpen(false);
+        setPlayerSearchQuery('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   const hasParams = Boolean(entity && cohort);
+
+  const sortedPlayers = [...players].sort((a, b) =>
+    (getPlayerLabel(a) ?? '').localeCompare(getPlayerLabel(b) ?? '', undefined, { sensitivity: 'base' })
+  );
+  const searchLower = (playerSearchQuery || '').trim().toLowerCase();
+  const filteredPlayers = searchLower
+    ? sortedPlayers.filter((p) =>
+        (getPlayerLabel(p) ?? '').toLowerCase().includes(searchLower)
+      )
+    : sortedPlayers;
 
   if (!hasParams) {
     return (
@@ -248,9 +355,26 @@ const ProfilePage = () => {
   const selectedPlayerObj = players.find((p) => String(getPlayerValue(p)) === String(selectedPlayer));
   const raw = playerDetails || {};
   const profile = raw.profile || raw;
-  const bat = raw.batting || raw.batting_stats || {};
-  const bowl = raw.bowling || raw.bowling_stats || {};
-  const field = raw.fielding || raw.fielding_stats || {};
+  const hasBreakdown = raw.breakdown && Array.isArray(raw.breakdown) && raw.breakdown.length > 0;
+  const showSeasonFilter = selectedCategories.length === 1;
+  const singleSelectedCategory = selectedCategories[0];
+  const filteredByBreakdown = hasBreakdown
+    ? filterAndAggregateBreakdown(
+        raw.breakdown,
+        selectedCategories,
+        showSeasonFilter ? selectedSeasons : [],
+        showSeasonFilter
+      )
+    : null;
+  const bat = hasBreakdown
+    ? (filteredByBreakdown?.batting ?? {})
+    : (raw.batting || raw.batting_stats || {});
+  const bowl = hasBreakdown
+    ? (filteredByBreakdown?.bowling ?? {})
+    : (raw.bowling || raw.bowling_stats || {});
+  const field = hasBreakdown
+    ? (filteredByBreakdown?.fielding ?? {})
+    : (raw.fielding || raw.fielding_stats || {});
 
   const playerName =
     getVal(profile, 'name', 'player_name', 'Player') ||
@@ -311,39 +435,69 @@ const ProfilePage = () => {
     );
   };
 
-  const showSeasonFilter = selectedCategories.length === 1;
-  const singleSelectedCategory = selectedCategories[0];
-
   return (
     <div className="profile-page">
       <h1>Player Profile</h1>
       <p className="profile-page__subtitle">
         {entity?.charAt(0).toUpperCase()}{entity?.slice(1)} · {cohort?.charAt(0).toUpperCase()}{cohort?.slice(1)}
       </p>
-      <div className="profile-page__selector">
+      <div className="profile-page__selector" ref={playerDropdownRef}>
         <label htmlFor="player-select">Select Player</label>
-        <select
-          id="player-select"
-          value={selectedPlayer}
-          onChange={(e) => {
-            const value = e.target.value;
-            const option = e.target.selectedOptions?.[0];
-            const label = option?.text ?? '';
-            setSelectedPlayer(value);
-            setSelectedPlayerName(label);
-          }}
-          className="selector-dropdown"
-          disabled={players.length === 0}
-        >
-          <option value="">Select a player</option>
-          {[...players]
-            .sort((a, b) => (getPlayerLabel(a) ?? '').localeCompare(getPlayerLabel(b) ?? '', undefined, { sensitivity: 'base' }))
-            .map((player) => (
-              <option key={getPlayerValue(player)} value={getPlayerValue(player)}>
-                {getPlayerLabel(player) ?? getPlayerValue(player)}
-              </option>
-            ))}
-        </select>
+        <div className="player-searchable-dropdown">
+          <button
+            type="button"
+            id="player-select"
+            className={`selector-dropdown player-searchable-dropdown__trigger ${playerDropdownOpen ? 'player-searchable-dropdown__trigger--open' : ''}`}
+            onClick={() => setPlayerDropdownOpen((o) => !o)}
+            disabled={players.length === 0}
+            aria-haspopup="listbox"
+            aria-expanded={playerDropdownOpen}
+          >
+            {selectedPlayerName || 'Select a player'}
+          </button>
+          {playerDropdownOpen && (
+            <div className="player-searchable-dropdown__panel" role="listbox">
+              <input
+                type="text"
+                className="player-searchable-dropdown__search"
+                placeholder="Search players..."
+                value={playerSearchQuery}
+                onChange={(e) => setPlayerSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.stopPropagation()}
+                autoFocus
+              />
+              <ul className="player-searchable-dropdown__list">
+                {filteredPlayers.length === 0 ? (
+                  <li className="player-searchable-dropdown__item player-searchable-dropdown__item--empty">
+                    No players match &quot;{playerSearchQuery}&quot;
+                  </li>
+                ) : (
+                  filteredPlayers.map((player) => {
+                    const value = getPlayerValue(player);
+                    const label = getPlayerLabel(player) ?? value;
+                    const isSelected = String(value) === String(selectedPlayer);
+                    return (
+                      <li
+                        key={value}
+                        role="option"
+                        aria-selected={isSelected}
+                        className={`player-searchable-dropdown__item ${isSelected ? 'player-searchable-dropdown__item--selected' : ''}`}
+                        onClick={() => {
+                          setSelectedPlayer(value);
+                          setSelectedPlayerName(label);
+                          setPlayerSearchQuery('');
+                          setPlayerDropdownOpen(false);
+                        }}
+                      >
+                        {label}
+                      </li>
+                    );
+                  })
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
       {players.length === 0 && !loading && (
         <p className="profile-page__empty">No players found for the selected entity and cohort.</p>
@@ -403,13 +557,43 @@ const ProfilePage = () => {
           )}
           <div className="player-profile__stats">
             {battingStats.some(([, v]) => v != null && v !== '') && (
-              <StatCard title="Batting" icon="🏏" stats={battingStats} />
+              <div className="player-stat-section">
+                <h3 className="player-stat-section__title">
+                  <span className="player-stat-section__icon">🏏</span>
+                  Batting
+                </h3>
+                <div className="player-stat-tiles">
+                  {battingStats.map(([label, v]) => (
+                    <StatTile key={label} label={label} value={v} />
+                  ))}
+                </div>
+              </div>
             )}
             {bowlingStats.some(([, v]) => v != null && v !== '') && (
-              <StatCard title="Bowling" icon="🎯" stats={bowlingStats} />
+              <div className="player-stat-section">
+                <h3 className="player-stat-section__title">
+                  <span className="player-stat-section__icon">🎯</span>
+                  Bowling
+                </h3>
+                <div className="player-stat-tiles">
+                  {bowlingStats.map(([label, v]) => (
+                    <StatTile key={label} label={label} value={v} />
+                  ))}
+                </div>
+              </div>
             )}
             {fieldingStats.some(([, v]) => v != null && v !== '') && (
-              <StatCard title="Fielding" icon="🧤" stats={fieldingStats} />
+              <div className="player-stat-section">
+                <h3 className="player-stat-section__title">
+                  <span className="player-stat-section__icon">🧤</span>
+                  Fielding
+                </h3>
+                <div className="player-stat-tiles">
+                  {fieldingStats.map(([label, v]) => (
+                    <StatTile key={label} label={label} value={v} />
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>

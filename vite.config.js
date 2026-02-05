@@ -23,7 +23,6 @@ const handleWatcherErrors = () => {
 
 export default defineConfig({
   plugins: [
-    react({ jsxRuntime: 'automatic' }),
     //react({ jsxRuntime: 'automatic' }),
     handleWatcherErrors()
   ],
