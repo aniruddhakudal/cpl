@@ -1,0 +1,252 @@
+.registration-page {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.registration-page__title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.registration-page__subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.registration-page__form-section,
+.registration-page__leaderboard {
+  margin-bottom: 3rem;
+}
+
+.registration-page__form-section h2,
+.registration-page__leaderboard h2 {
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+}
+
+.registration-form__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.registration-form__row label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.registration-form__row input,
+.registration-form__row select {
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.registration-form__row input:focus,
+.registration-form__row select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.registration-form__row .required {
+  color: var(--error-color);
+}
+
+.registration-form__file-input {
+  display: none;
+}
+
+.registration-form__photo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.registration-form__upload-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.registration-form__upload-btn:hover {
+  background: var(--accent-hover);
+}
+
+.registration-form__preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.registration-form__preview img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+}
+
+.registration-form__clear {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.registration-form__clear:hover {
+  color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+.registration-form__error {
+  color: var(--error-color);
+  font-size: 0.95rem;
+}
+
+.registration-form__success {
+  color: #059669;
+  font-size: 0.95rem;
+}
+
+.registration-form__submit {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.registration-form__submit:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.registration-form__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.registration-page__filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.registration-page__filter label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.registration-page__filter select {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.95rem;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.registration-page__loading,
+.registration-page__empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.registration-leaderboard {
+  overflow-x: auto;
+}
+
+.registration-leaderboard__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.registration-leaderboard__table th,
+.registration-leaderboard__table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.registration-leaderboard__table th {
+  background: var(--bg-hover);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.registration-leaderboard__table td {
+  color: var(--text-primary);
+}
+
+.registration-leaderboard__photo {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.registration-leaderboard__no-photo {
+  color: var(--text-secondary);
+}
+
+.registration-leaderboard__status {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.registration-leaderboard__status--awaiting_confirmation {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.registration-leaderboard__status--registered {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.registration-leaderboard__status--waitlisted {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.registration-leaderboard__status--rejected,
+.registration-leaderboard__status--cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}

@@ -8,6 +8,9 @@ import CrickipediaHomePage from './pages/CrickipediaHomePage';
 import ShankeshwaramPage from './pages/ShankeshwaramPage';
 import ShiroliPage from './pages/ShiroliPage';
 import CelebriaEntityPage from './pages/CelebriaEntityPage';
+import RegistrationPage from './pages/RegistrationPage';
+import RegisterLandingPage from './pages/RegisterLandingPage';
+import AdminRegistrationsPage from './pages/AdminRegistrationsPage';
 import './App.css';
 
 // site_switch: set via env VITE_SITE_SWITCH = "celebria" | "crickipedia"
@@ -31,6 +34,12 @@ function RedirectCelebriaCohort({ suffix = '' }) {
   return <Navigate to={path} replace />;
 }
 
+// Redirect /register/:cohort to /cpl/register/cplx/:cohort
+function LegacyRegisterRedirect() {
+  const { cohort } = useParams();
+  return <Navigate to={`/cpl/register/cplx/${cohort || 'men'}`} replace />;
+}
+
 function App() {
   return (
     <div className="app-layout">
@@ -39,6 +48,16 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          {isCelebria && (
+            <>
+              <Route path="/cpl/register" element={<RegisterLandingPage />} />
+              <Route path="/cpl/register/:season/:cohort" element={<RegistrationPage />} />
+              <Route path="/admin/registrations" element={<AdminRegistrationsPage />} />
+              {/* Legacy redirects */}
+              <Route path="/register" element={<Navigate to="/cpl/register" replace />} />
+              <Route path="/register/:cohort" element={<LegacyRegisterRedirect />} />
+            </>
+          )}
 
           {isCelebria ? (
             <>

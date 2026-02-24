@@ -38,14 +38,33 @@ const getBasePath = (entity) => {
   return `/${entity}`;
 };
 
+const MOBILE_BREAKPOINT = 768;
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+    const handler = () => setIsMobile(mq.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return isMobile;
+};
+
 const MenuBar = () => {
   const location = useLocation();
   const entity = getEntityFromPath(location.pathname);
   const basePath = getBasePath(entity);
+  const isMobile = useIsMobile();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [cohorts, setCohorts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const closeTimeoutRef = useRef(null);
   const clickOpenTimeRef = useRef(0);
+
+  const closeDrawer = () => setDrawerOpen(false);
 
   const clearCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -107,9 +126,18 @@ const MenuBar = () => {
     loadCohorts();
   }, [entity]);
 
+  useEffect(() => {
+    if (drawerOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [drawerOpen, isMobile]);
+
   const cohortMenus = [
-    { key: 'statboard', label: 'Statboard', basePath },
-    { key: 'profile', label: 'Profile', basePath },
+    { key: 'statboard', label: 'Stats', basePath },
+    { key: 'profile', label: 'Players', basePath },
   ];
 
   const getCohortPath = (menu, cohort) => {
@@ -139,24 +167,46 @@ const MenuBar = () => {
         !path.endsWith('/profile') &&
         !path.endsWith('/cpl_rules');
     }
+    if (menu.key === 'register') return path.startsWith('/cpl/register');
     if (menu.key === 'profile') return path.endsWith('/profile');
     return false;
   };
 
+  const linkProps = (to, extra = {}) => ({
+    to,
+    className: ({ isActive }) => `menu-bar__link ${isActive ? 'menu-bar__link--active' : ''}`,
+    onClick: isMobile ? closeDrawer : undefined,
+    ...extra,
+  });
+
   return (
-    <nav ref={navRef} className={`menu-bar ${isCelebria ? 'menu-bar--centered' : ''}`}>
-      {!isCelebria && (
-        <div className="menu-bar__brand">
-          <NavLink to="/" className="menu-bar__brand-link" aria-label="Crickipedia Stats - Home">
-            <img
-              src="/data/images/crickipedia/crickipedia_button1.png"
-              alt="Crickipedia Stats"
-              className="menu-bar__brand-img"
-            />
-          </NavLink>
-        </div>
-      )}
-      <ul className="menu-bar__items">
+    <>
+      <nav ref={navRef} className={`menu-bar ${isCelebria ? 'menu-bar--centered' : ''} ${isMobile ? 'menu-bar--mobile' : ''}`}>
+        {!isCelebria && (
+          <div className="menu-bar__brand">
+            <NavLink to="/" className="menu-bar__brand-link" aria-label="Crickipedia Stats - Home">
+              <img
+                src="/data/images/crickipedia/crickipedia_button1.png"
+                alt="Crickipedia Stats"
+                className="menu-bar__brand-img"
+              />
+            </NavLink>
+          </div>
+        )}
+        {isMobile && (
+          <button
+            type="button"
+            className="menu-bar__hamburger"
+            onClick={() => setDrawerOpen((o) => !o)}
+            aria-label={drawerOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={drawerOpen}
+          >
+            <span className="menu-bar__hamburger-bar" />
+            <span className="menu-bar__hamburger-bar" />
+            <span className="menu-bar__hamburger-bar" />
+          </button>
+        )}
+      <ul className={`menu-bar__items ${isMobile ? 'menu-bar__items--desktop-only' : ''}`}>
         <li>
           <NavLink
             to="/"
@@ -178,6 +228,19 @@ const MenuBar = () => {
             >
               Auction
             </a>
+          </li>
+        )}
+        {isCelebria && (
+          <li>
+            <NavLink
+              to="/cpl/register"
+              className={({ isActive }) =>
+                `menu-bar__link ${isActive ? 'menu-bar__link--active' : ''}`
+              }
+              onClick={isMobile ? closeDrawer : undefined}
+            >
+              Join CPL
+            </NavLink>
           </li>
         )}
         {isCrickipedia ? (
@@ -309,6 +372,81 @@ const MenuBar = () => {
         <ThemeToggle />
       </div>
     </nav>
+
+    {isMobile && (
+      <>
+        <div
+          className={`menu-bar__drawer-backdrop ${drawerOpen ? 'menu-bar__drawer-backdrop--open' : ''}`}
+          onClick={closeDrawer}
+          aria-hidden="true"
+        />
+        <aside
+          className={`menu-bar__drawer ${drawerOpen ? 'menu-bar__drawer--open' : ''}`}
+          aria-label="Navigation menu"
+        >
+          <ul className="menu-bar__drawer-list">
+            <li>
+              <NavLink {...linkProps('/', { end: true })}>Home</NavLink>
+            </li>
+            {isCelebria && (
+              <li>
+                <a
+                  href="https://raneonkar.com/cpl/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="menu-bar__link"
+                  onClick={closeDrawer}
+                >
+                  Auction
+                </a>
+              </li>
+            )}
+            {isCelebria && (
+              <li>
+                <NavLink {...linkProps('/cpl/register')}>Join CPL</NavLink>
+              </li>
+            )}
+            {isCrickipedia && TOURNAMENT_ITEMS.map((item) => (
+              <li key={item.path}>
+                <NavLink {...linkProps(item.path)}>{item.label}</NavLink>
+              </li>
+            ))}
+            {(!isCrickipedia || location.pathname !== '/') &&
+              cohorts.map((cohort) => {
+                const value = typeof cohort === 'object' ? cohort.id || cohort.value || cohort.label : cohort;
+                const label = typeof cohort === 'object' ? cohort.label || cohort.id || cohort : cohort;
+                const cap = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+                return (
+                  <li key={`stats-${value}`}>
+                    <NavLink {...linkProps(`${basePath}/${value}`)}>
+                      {cap(label)} Stats
+                    </NavLink>
+                  </li>
+                );
+              })}
+            {(!isCrickipedia || location.pathname !== '/') &&
+              cohorts.map((cohort) => {
+                const value = typeof cohort === 'object' ? cohort.id || cohort.value || cohort.label : cohort;
+                const label = typeof cohort === 'object' ? cohort.label || cohort.id || cohort : cohort;
+                const cap = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+                return (
+                  <li key={`players-${value}`}>
+                    <NavLink {...linkProps(`${basePath}/${value}/profile`)}>
+                      {cap(label)} Players
+                    </NavLink>
+                  </li>
+                );
+              })}
+            {(!isCrickipedia || location.pathname !== '/') && (
+              <li>
+                <NavLink {...linkProps(rulesPath)}>Rules</NavLink>
+              </li>
+            )}
+          </ul>
+        </aside>
+      </>
+    )}
+    </>
   );
 };
 
