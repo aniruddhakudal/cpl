@@ -1,0 +1,3 @@
+# SPA fallback: serve index.html for all routes so React Router can handle them
+# Direct URLs like /cpl/register, /celebria/men will work
+/*    /index.html   200
