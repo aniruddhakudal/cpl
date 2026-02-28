@@ -93,6 +93,11 @@
   color: var(--text-primary);
 }
 
+.admin-registrations-page__filter option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
 .admin-registrations-page__logout {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
@@ -150,11 +155,38 @@
   color: var(--text-primary);
 }
 
+.admin-registrations-table__photo-btn,
+.admin-registrations-table__receipt-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.admin-registrations-table__photo-btn:hover .admin-registrations-table__photo,
+.admin-registrations-table__receipt-btn:hover .admin-registrations-table__receipt {
+  opacity: 0.9;
+}
+
 .admin-registrations-table__photo {
   width: 40px;
   height: 40px;
   object-fit: cover;
   border-radius: 50%;
+  display: block;
+}
+
+.admin-registrations-table__receipt {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid var(--border-color);
+}
+
+.admin-registrations-table__receipt-btn:hover .admin-registrations-table__receipt {
+  border-color: var(--accent-primary);
 }
 
 .admin-registrations-table__no-photo {
@@ -195,9 +227,14 @@
   font-size: 0.9rem;
   border: 2px solid var(--border-color);
   border-radius: 6px;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   cursor: pointer;
+}
+
+.admin-registrations-table__select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .admin-registrations-table__select:focus {
@@ -240,4 +277,72 @@
 .admin-registrations-table__delete:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Image modal */
+.admin-registrations-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-registrations-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.admin-registrations-modal__content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-registrations-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-registrations-modal__label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-registrations-modal__close {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.admin-registrations-modal__close:hover {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.admin-registrations-modal__img {
+  max-width: 100%;
+  max-height: calc(90vh - 60px);
+  object-fit: contain;
+  display: block;
 }

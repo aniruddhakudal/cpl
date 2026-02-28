@@ -23,6 +23,9 @@ const RegisterLandingPage = () => {
           </Link>
         ))}
       </div>
+      <p className="register-landing__admin-link">
+        <Link to="/admin/registrations">Admin</Link>
+      </p>
     </div>
   );
 };

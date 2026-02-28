@@ -10,6 +10,25 @@
   color: var(--text-primary);
 }
 
+.registration-page__register-cta {
+  margin-bottom: 2rem;
+}
+
+.registration-page__register-btn {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.registration-page__register-btn:hover {
+  background: var(--accent-hover);
+}
+
 .registration-page__subtitle {
   color: var(--text-secondary);
   margin-bottom: 2rem;
@@ -69,6 +88,33 @@
   color: var(--error-color);
 }
 
+.registration-form__row--qr {
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: 0.5rem;
+}
+
+.registration-form__qr-label {
+  font-size: 1rem !important;
+}
+
+.registration-form__qr {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.registration-form__qr-img {
+  max-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+}
+
+.registration-form__receipt-label {
+  margin-top: 0.5rem;
+}
+
 .registration-form__file-input {
   display: none;
 }
@@ -122,6 +168,12 @@
   border-color: var(--error-color);
 }
 
+.registration-form__submit-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
 .registration-form__error {
   color: var(--error-color);
   font-size: 0.95rem;
@@ -136,8 +188,8 @@
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
-  background: var(--accent-primary);
-  color: var(--text-inverse);
+  background: #059669;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -145,10 +197,37 @@
 }
 
 .registration-form__submit:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: #047857;
 }
 
 .registration-form__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.registration-form__buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.registration-form__cancel {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.registration-form__cancel:hover:not(:disabled) {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.registration-form__cancel:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -211,11 +290,24 @@
   color: var(--text-primary);
 }
 
+.registration-leaderboard__photo-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.registration-leaderboard__photo-btn:hover .registration-leaderboard__photo {
+  opacity: 0.9;
+}
+
 .registration-leaderboard__photo {
   width: 40px;
   height: 40px;
   object-fit: cover;
   border-radius: 50%;
+  display: block;
 }
 
 .registration-leaderboard__no-photo {
@@ -249,4 +341,89 @@
 .registration-leaderboard__status--cancelled {
   background: #fee2e2;
   color: #991b1b;
+}
+
+.registration-page__admin-link {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.registration-page__admin-link a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+
+.registration-page__admin-link a:hover {
+  color: var(--accent-hover);
+}
+
+/* Image modal */
+.registration-page__modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.registration-page__modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.registration-page__modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.registration-page__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.registration-page__modal-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.registration-page__modal-close {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.registration-page__modal-close:hover {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.registration-page__modal-img {
+  max-width: 100%;
+  max-height: calc(90vh - 60px);
+  object-fit: contain;
+  display: block;
 }

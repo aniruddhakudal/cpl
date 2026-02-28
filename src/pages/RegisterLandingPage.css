@@ -44,3 +44,19 @@
   color: var(--text-inverse);
   transform: translateY(-2px);
 }
+
+.register-landing__admin-link {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.95rem;
+}
+
+.register-landing__admin-link a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+
+.register-landing__admin-link a:hover {
+  color: var(--accent-hover);
+}

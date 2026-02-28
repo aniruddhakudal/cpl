@@ -78,18 +78,22 @@ export const fetchRegistrations = async (opts = {}) => {
 };
 
 /**
- * Upload profile photo to Supabase Storage. Returns the public URL.
+ * Upload image to Supabase Storage. Returns the public URL.
  * @param {string} imageBase64 - Data URL (data:image/...;base64,...) or raw base64
+ * @param {string} folder - "profile" or "receipt" (default: "profile")
  */
-export const uploadRegistrationImage = async (imageBase64) => {
+export const uploadRegistrationImage = async (imageBase64, folder = 'profile') => {
   const response = await fetch(`${API_BASE}/v1/sports/cricket/registration/upload-image`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image_base64: imageBase64 }),
+    body: JSON.stringify({ image_base64: imageBase64, folder }),
   });
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err.detail || `Upload failed: ${response.status}`);
+    let msg = `Upload failed: ${response.status}`;
+    if (typeof err.detail === 'string') msg = err.detail;
+    else if (Array.isArray(err.detail) && err.detail[0]?.msg) msg = err.detail[0].msg;
+    throw new Error(msg);
   }
   const result = await response.json();
   return result.url;
@@ -97,7 +101,7 @@ export const uploadRegistrationImage = async (imageBase64) => {
 
 /**
  * Submit a new registration
- * @param {Object} data - { first_name, last_name, whatsapp_number, season, category, image_url? }
+ * @param {Object} data - { first_name, last_name, whatsapp_number, season, category, image_url?, payment_receipt_url? }
  */
 export const submitRegistration = async (data) => {
   const response = await fetch(`${API_BASE}/v1/sports/cricket/registration`, {

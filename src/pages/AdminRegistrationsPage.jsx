@@ -30,6 +30,7 @@ const AdminRegistrationsPage = () => {
   const [updatingId, setUpdatingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [modalImage, setModalImage] = useState(null);
 
   const saveAdminKey = (key) => {
     setAdminKey(key);
@@ -91,6 +92,20 @@ const AdminRegistrationsPage = () => {
   useEffect(() => {
     if (authenticated) loadRegistrations();
   }, [authenticated, filterSeason, filterCategory]);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setModalImage(null);
+    };
+    if (modalImage) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [modalImage]);
 
   const handleStatusChange = async (id, newStatus) => {
     if (!adminKey) return;
@@ -206,6 +221,7 @@ const AdminRegistrationsPage = () => {
               <tr>
                 <th>#</th>
                 <th>Photo</th>
+                <th>Receipt</th>
                 <th>Name</th>
                 <th>Season</th>
                 <th>Cohort</th>
@@ -220,11 +236,36 @@ const AdminRegistrationsPage = () => {
                   <td>{i + 1}</td>
                   <td>
                     {r.image_url ? (
-                      <img
-                        src={r.image_url}
-                        alt=""
-                        className="admin-registrations-table__photo"
-                      />
+                      <button
+                        type="button"
+                        onClick={() => setModalImage({ url: r.image_url, label: 'Profile photo' })}
+                        className="admin-registrations-table__photo-btn"
+                        title="View profile photo"
+                      >
+                        <img
+                          src={r.image_url}
+                          alt=""
+                          className="admin-registrations-table__photo"
+                        />
+                      </button>
+                    ) : (
+                      <span className="admin-registrations-table__no-photo">—</span>
+                    )}
+                  </td>
+                  <td>
+                    {r.payment_receipt_url ? (
+                      <button
+                        type="button"
+                        onClick={() => setModalImage({ url: r.payment_receipt_url, label: 'Receipt' })}
+                        className="admin-registrations-table__receipt-btn"
+                        title="View receipt"
+                      >
+                        <img
+                          src={r.payment_receipt_url}
+                          alt="Receipt"
+                          className="admin-registrations-table__receipt"
+                        />
+                      </button>
                     ) : (
                       <span className="admin-registrations-table__no-photo">—</span>
                     )}
@@ -290,6 +331,36 @@ const AdminRegistrationsPage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {modalImage && (
+        <div
+          className="admin-registrations-modal"
+          onClick={() => setModalImage(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="View image"
+        >
+          <div className="admin-registrations-modal__backdrop" />
+          <div className="admin-registrations-modal__content" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-registrations-modal__header">
+              <span className="admin-registrations-modal__label">{modalImage.label}</span>
+              <button
+                type="button"
+                onClick={() => setModalImage(null)}
+                className="admin-registrations-modal__close"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <img
+              src={modalImage.url}
+              alt={modalImage.label}
+              className="admin-registrations-modal__img"
+            />
+          </div>
         </div>
       )}
     </div>

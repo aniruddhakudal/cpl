@@ -7,6 +7,7 @@
 /* Light Theme (Default) – readable contrast */
 :root[data-theme='light'],
 :root {
+  color-scheme: light;
   --bg-primary: linear-gradient(135deg, #e8ecff 0%, #f5f3ff 50%, #faf5ff 100%);
   --bg-secondary: #ffffff;
   --bg-tertiary: rgba(255, 255, 255, 0.9);
@@ -30,6 +31,7 @@
 
 /* Dark Theme */
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   --bg-secondary: rgba(30, 30, 46, 0.95);
   --bg-tertiary: rgba(30, 30, 46, 0.8);
