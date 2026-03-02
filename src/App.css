@@ -215,6 +215,69 @@
   padding: 0 1rem;
 }
 
+.home-page__subtitle--highlight {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  padding: 0.35rem 0.75rem;
+  background: rgba(79, 70, 229, 0.12);
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.home-page__cpl-announcement {
+  margin-top: 2.5rem;
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  border: 2px solid var(--accent-primary);
+  text-align: center;
+  max-width: 400px;
+}
+
+.home-page__cpl-heading {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.home-page__cpl-deadline {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  margin: 0 0 1.25rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(79, 70, 229, 0.12);
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.home-page__cpl-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.home-page__cpl-link {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.home-page__cpl-link:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
 .home-page__welcome {
   font-size: 1.25rem;
   color: var(--text-primary);
