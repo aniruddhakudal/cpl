@@ -274,9 +274,14 @@ const RegistrationPage = () => {
     return <Navigate to={`/cpl/register/${season}/${cohorts[0]}`} replace />;
   }
 
+  const isMen = cohort?.toLowerCase() === 'men';
+
   return (
     <div className="registration-page">
       <h1 className="registration-page__title">{seasonLabel} Registration - {cohortLabel}</h1>
+      {isMen && season?.toLowerCase() === 'cplx' && (
+        <p className="registration-page__tournament-date">Tournament date: 11/12th Apr</p>
+      )}
 
       {!showForm ? (
         <div className="registration-page__register-cta">

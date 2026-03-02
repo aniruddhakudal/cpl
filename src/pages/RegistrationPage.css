@@ -10,6 +10,13 @@
   color: var(--text-primary);
 }
 
+.registration-page__tournament-date {
+  font-size: 1.1rem;
+  color: var(--accent-primary);
+  margin: 0 0 1.5rem;
+  font-weight: 600;
+}
+
 .registration-page__register-cta {
   margin-bottom: 2rem;
 }

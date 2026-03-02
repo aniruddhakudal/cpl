@@ -14,6 +14,7 @@ const CelebriaHomePage = () => {
       <section className="home-page__cpl-announcement">
         <h2 className="home-page__cpl-heading">CPL X Registrations Open</h2>
         <p className="home-page__cpl-deadline">Last date: 5th March</p>
+        <p className="home-page__cpl-tournament">CPL X Men: 11/12th Apr</p>
         <div className="home-page__cpl-links">
           <Link to="/cpl/register/cplx/men" className="home-page__cpl-link">
             Men
