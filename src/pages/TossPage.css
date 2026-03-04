@@ -1,0 +1,269 @@
+.toss-page {
+  padding: 2rem;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.toss-page__title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.toss-page__subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.toss-page__coin-wrap {
+  perspective: 500px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  min-height: 180px;
+  align-items: center;
+  position: relative;
+}
+
+.toss-page__coin-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 12px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+}
+
+.toss-page__coin-wrap--flipping::after {
+  animation: coin-shadow 1.2s ease-in-out;
+}
+
+@keyframes coin-shadow {
+  0%, 100% {
+    width: 70px;
+    height: 12px;
+    opacity: 0.8;
+  }
+  50% {
+    width: 45px;
+    height: 8px;
+    opacity: 0.4;
+  }
+}
+
+.toss-page__coin {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+  transform-origin: center center;
+}
+
+.toss-page__coin[data-result="heads"] {
+  transform: rotateY(0deg);
+}
+
+.toss-page__coin[data-result="tails"] {
+  transform: rotateY(180deg);
+}
+
+.toss-page__coin--flipping[data-result="heads"] {
+  animation: coin-flip-heads 1.2s ease-in-out forwards;
+}
+
+.toss-page__coin--flipping[data-result="tails"] {
+  animation: coin-flip-tails 1.2s ease-in-out forwards;
+}
+
+@keyframes coin-flip-heads {
+  25% {
+    transform: translateY(-25px) translateZ(20px) rotateX(8deg) rotateY(450deg);
+  }
+  50% {
+    transform: translateY(-45px) translateZ(35px) rotateX(15deg) rotateY(900deg);
+  }
+  75% {
+    transform: translateY(-15px) translateZ(10px) rotateX(5deg) rotateY(1350deg);
+  }
+  100% {
+    transform: translateY(0) translateZ(0) rotateX(0deg) rotateY(1800deg);
+  }
+}
+
+@keyframes coin-flip-tails {
+  25% {
+    transform: translateY(-25px) translateZ(20px) rotateX(8deg) rotateY(495deg);
+  }
+  50% {
+    transform: translateY(-45px) translateZ(35px) rotateX(15deg) rotateY(990deg);
+  }
+  75% {
+    transform: translateY(-15px) translateZ(10px) rotateX(5deg) rotateY(1485deg);
+  }
+  100% {
+    transform: translateY(0) translateZ(0) rotateX(0deg) rotateY(1980deg);
+  }
+}
+
+.toss-page__coin-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Raised rim like INR coin */
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 255, 255, 0.4),
+    inset 0 0 0 5px #b0b0b0,
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    0 3px 10px rgba(0, 0, 0, 0.25);
+  /* Silver metallic finish (copper-nickel look) */
+  background: radial-gradient(circle at 30% 30%, #f0f0f0, #c8c8c8 40%, #a0a0a0 70%, #d8d8d8);
+  color: #3d3d3d;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+  transform: rotateY(0deg);
+}
+
+.toss-page__coin-face--heads {
+  transform: rotateY(0deg);
+}
+
+.toss-page__coin-face--tails {
+  transform: rotateY(180deg);
+}
+
+/* INR 1 Heads: भारत, emblem, INDIA */
+.toss-page__coin-inr-heads {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px;
+}
+
+.toss-page__coin-hindi {
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.toss-page__coin-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.toss-page__emblem-svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: currentColor;
+}
+
+.toss-page__coin-english {
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1;
+}
+
+/* INR 1 Tails: रुपया, 1, RUPEE */
+.toss-page__coin-inr-tails {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 4px;
+}
+
+.toss-page__coin-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.toss-page__buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.toss-page__btn {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.toss-page__btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
+.toss-page__btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.toss-page__status {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.toss-page__status--flipping {
+  animation: pulse 0.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.6; }
+}
+
+.toss-page__result {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  border: 2px solid var(--border-color);
+}
+
+.toss-page__outcome {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.toss-page__verdict {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.toss-page__verdict--won {
+  color: #059669;
+}
+
+.toss-page__verdict--lost {
+  color: var(--text-secondary);
+}

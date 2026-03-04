@@ -11,6 +11,7 @@ import CelebriaEntityPage from './pages/CelebriaEntityPage';
 import RegistrationPage from './pages/RegistrationPage';
 import RegisterLandingPage from './pages/RegisterLandingPage';
 import AdminRegistrationsPage from './pages/AdminRegistrationsPage';
+import TossPage from './pages/TossPage';
 import './App.css';
 
 // site_switch: set via env VITE_SITE_SWITCH = "celebria" | "crickipedia"
@@ -48,6 +49,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/toss" element={<TossPage />} />
           {isCelebria && (
             <>
               <Route path="/cpl/register" element={<RegisterLandingPage />} />

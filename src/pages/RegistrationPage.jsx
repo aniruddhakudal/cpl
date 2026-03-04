@@ -372,6 +372,12 @@ const RegistrationPage = () => {
           </div>
           <div className="registration-form__row registration-form__row--qr">
             <label className="registration-form__qr-label">Scan this QR to pay registration fee</label>
+            {isMen && season?.toLowerCase() === 'cplx' && (
+              <p className="registration-form__qr-fees">Registration Fees: Rs. 600 | UPI ID: toshniwalraman2030@okicici</p>
+            )}
+            {cohort?.toLowerCase() === 'kids' && season?.toLowerCase() === 'cplx' && (
+              <p className="registration-form__qr-fees">Registration Fees: Rs. 400 | UPI ID: toshniwalraman2030@okicici</p>
+            )}
             <div className="registration-form__qr">
               <img src={cohort?.toLowerCase() === 'kids' ? '/data/cpl_contri_qr_kids.jpeg' : '/data/cpl_contri_qr_men.jpeg'} alt="Payment QR Code" className="registration-form__qr-img" />
             </div>
