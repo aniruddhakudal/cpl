@@ -3,6 +3,8 @@ import {
   fetchRegistrationSeasons,
   fetchRegistrationCohorts,
   fetchRegistrations,
+  fetchShowParticipants,
+  updateShowParticipants,
   updateRegistrationStatus,
   deleteRegistration,
 } from '../utils/registrationLoader';
@@ -26,11 +28,16 @@ const AdminRegistrationsPage = () => {
   const [registrations, setRegistrations] = useState([]);
   const [filterSeason, setFilterSeason] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [modalImage, setModalImage] = useState(null);
+  const [showParticipantsList, setShowParticipantsList] = useState(false);
+  const [updatingShowParticipants, setUpdatingShowParticipants] = useState(false);
+  const [sortBy, setSortBy] = useState('created_at');
+  const [sortOrder, setSortOrder] = useState('asc');
 
   const saveAdminKey = (key) => {
     setAdminKey(key);
@@ -76,6 +83,7 @@ const AdminRegistrationsPage = () => {
     const opts = { order_by: 'created_at.asc', limit: 500 };
     if (filterSeason) opts.season = filterSeason;
     if (filterCategory) opts.category = filterCategory;
+    if (filterStatus) opts.status = filterStatus;
     const data = await fetchRegistrations(opts);
     setRegistrations(data);
     setLoading(false);
@@ -91,7 +99,32 @@ const AdminRegistrationsPage = () => {
 
   useEffect(() => {
     if (authenticated) loadRegistrations();
-  }, [authenticated, filterSeason, filterCategory]);
+  }, [authenticated, filterSeason, filterCategory, filterStatus]);
+
+  useEffect(() => {
+    const load = async () => {
+      if (authenticated) {
+        const show = await fetchShowParticipants();
+        setShowParticipantsList(show);
+      }
+    };
+    load();
+  }, [authenticated]);
+
+  const handleShowParticipantsToggle = async () => {
+    if (!adminKey) return;
+    setUpdatingShowParticipants(true);
+    setErrorMessage('');
+    try {
+      const newVal = !showParticipantsList;
+      await updateShowParticipants(newVal, adminKey);
+      setShowParticipantsList(newVal);
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to update setting');
+    } finally {
+      setUpdatingShowParticipants(false);
+    }
+  };
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -125,6 +158,33 @@ const AdminRegistrationsPage = () => {
       setUpdatingId(null);
     }
   };
+
+  const handleSort = (column) => {
+    if (sortBy === column) {
+      setSortOrder((o) => (o === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const sortedRegistrations = [...registrations].sort((a, b) => {
+    let cmp = 0;
+    if (sortBy === 'name') {
+      const na = `${(a.first_name || '')} ${(a.last_name || '')}`.toLowerCase();
+      const nb = `${(b.first_name || '')} ${(b.last_name || '')}`.toLowerCase();
+      cmp = na.localeCompare(nb);
+    } else if (sortBy === 'status') {
+      cmp = (a.status || '').localeCompare(b.status || '');
+    } else if (sortBy === 'category') {
+      cmp = (a.category || '').localeCompare(b.category || '');
+    } else if (sortBy === 'created_at') {
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+      cmp = da - db;
+    }
+    return sortOrder === 'asc' ? cmp : -cmp;
+  });
 
   const handleDelete = async (id, name) => {
     if (!adminKey) return;
@@ -173,6 +233,17 @@ const AdminRegistrationsPage = () => {
       <div className="admin-registrations-page__header">
         <h1>Admin: Registration Management</h1>
         <div className="admin-registrations-page__actions">
+          <label className="admin-registrations-page__show-participants">
+            <span className="admin-registrations-page__toggle-label">Show participants on public page</span>
+            <input
+              type="checkbox"
+              checked={showParticipantsList}
+              onChange={handleShowParticipantsToggle}
+              disabled={updatingShowParticipants}
+              className="admin-registrations-page__toggle-input"
+            />
+            <span className="admin-registrations-page__toggle-switch" />
+          </label>
           <select
             value={filterSeason}
             onChange={(e) => setFilterSeason(e.target.value)}
@@ -194,6 +265,18 @@ const AdminRegistrationsPage = () => {
             {cohorts.map((c) => (
               <option key={c} value={c}>
                 {c.charAt(0).toUpperCase() + c.slice(1)}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="admin-registrations-page__filter"
+          >
+            <option value="">All statuses</option>
+            {STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>
@@ -222,16 +305,48 @@ const AdminRegistrationsPage = () => {
                 <th>#</th>
                 <th>Photo</th>
                 <th>Receipt</th>
-                <th>Name</th>
+                <th>
+                  <button
+                    type="button"
+                    onClick={() => handleSort('name')}
+                    className="admin-registrations-table__sort-header"
+                  >
+                    Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </button>
+                </th>
                 <th>Season</th>
-                <th>Cohort</th>
-                <th>Status</th>
-                <th>Registration Time</th>
+                <th>
+                  <button
+                    type="button"
+                    onClick={() => handleSort('category')}
+                    className="admin-registrations-table__sort-header"
+                  >
+                    Cohort {sortBy === 'category' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </button>
+                </th>
+                <th>
+                  <button
+                    type="button"
+                    onClick={() => handleSort('status')}
+                    className="admin-registrations-table__sort-header"
+                  >
+                    Status {sortBy === 'status' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </button>
+                </th>
+                <th>
+                  <button
+                    type="button"
+                    onClick={() => handleSort('created_at')}
+                    className="admin-registrations-table__sort-header"
+                  >
+                    Registration Time {sortBy === 'created_at' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </button>
+                </th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {registrations.map((r, i) => (
+              {sortedRegistrations.map((r, i) => (
                 <tr key={r.id}>
                   <td>{i + 1}</td>
                   <td>

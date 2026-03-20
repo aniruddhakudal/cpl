@@ -3,6 +3,7 @@ import { useParams, Navigate, Link } from 'react-router-dom';
 import {
   fetchRegistrationCohorts,
   fetchRegistrations,
+  fetchShowParticipants,
   uploadRegistrationImage,
   submitRegistration,
 } from '../utils/registrationLoader';
@@ -101,6 +102,7 @@ const RegistrationPage = () => {
   const receiptInputRef = useRef(null);
 
   const [showForm, setShowForm] = useState(false);
+  const [showParticipantsList, setShowParticipantsList] = useState(false);
   const [modalImage, setModalImage] = useState(null);
   const [form, setForm] = useState({
     first_name: '',
@@ -137,6 +139,14 @@ const RegistrationPage = () => {
   useEffect(() => {
     if (season && cohort) loadRegistrations();
   }, [season, cohort]);
+
+  useEffect(() => {
+    const load = async () => {
+      const show = await fetchShowParticipants();
+      setShowParticipantsList(show);
+    };
+    load();
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -435,77 +445,79 @@ const RegistrationPage = () => {
       </section>
       )}
 
-      <section className="registration-page__leaderboard">
-        <h2>Registered Participants - {seasonLabel} {cohortLabel}</h2>
-        {loading ? (
-          <div className="registration-page__loading">
-            <div className="spinner"></div>
-            <p>Loading...</p>
-          </div>
-        ) : registrations.length === 0 ? (
-          <p className="registration-page__empty">No registrations yet. Be the first!</p>
-        ) : (
-          <div className="registration-leaderboard">
-            <table className="registration-leaderboard__table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Photo</th>
-                  <th>Name</th>
-                  <th>Registration Time</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {registrations.map((r, i) => (
-                  <tr key={r.id}>
-                    <td>{i + 1}</td>
-                    <td>
-                      {r.image_url ? (
-                        <button
-                          type="button"
-                          onClick={() => setModalImage({ url: r.image_url, label: `${r.first_name} ${r.last_name} - Profile photo` })}
-                          className="registration-leaderboard__photo-btn"
-                          title="View profile photo"
-                        >
-                          <img
-                            src={r.image_url}
-                            alt=""
-                            className="registration-leaderboard__photo"
-                          />
-                        </button>
-                      ) : (
-                        <span className="registration-leaderboard__no-photo">—</span>
-                      )}
-                    </td>
-                    <td>
-                      {r.first_name} {r.last_name}
-                    </td>
-                    <td>
-                      {r.created_at
-                        ? new Date(r.created_at).toLocaleString(undefined, {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })
-                        : '—'}
-                    </td>
-                    <td>
-                      <span
-                        className={`registration-leaderboard__status registration-leaderboard__status--${(r.status || 'awaiting_confirmation').toLowerCase().replace(' ', '_')}`}
-                      >
-                        {(r.status || 'awaiting_confirmation').replace(/_/g, ' ')}
-                      </span>
-                    </td>
+      {showParticipantsList && (
+        <section className="registration-page__leaderboard">
+          <h2>Registered Participants - {seasonLabel} {cohortLabel}</h2>
+          {loading ? (
+            <div className="registration-page__loading">
+              <div className="spinner"></div>
+              <p>Loading...</p>
+            </div>
+          ) : registrations.length === 0 ? (
+            <p className="registration-page__empty">No registrations yet. Be the first!</p>
+          ) : (
+            <div className="registration-leaderboard">
+              <table className="registration-leaderboard__table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Registration Time</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+                </thead>
+                <tbody>
+                  {registrations.map((r, i) => (
+                    <tr key={r.id}>
+                      <td>{i + 1}</td>
+                      <td>
+                        {r.image_url ? (
+                          <button
+                            type="button"
+                            onClick={() => setModalImage({ url: r.image_url, label: `${r.first_name} ${r.last_name} - Profile photo` })}
+                            className="registration-leaderboard__photo-btn"
+                            title="View profile photo"
+                          >
+                            <img
+                              src={r.image_url}
+                              alt=""
+                              className="registration-leaderboard__photo"
+                            />
+                          </button>
+                        ) : (
+                          <span className="registration-leaderboard__no-photo">—</span>
+                        )}
+                      </td>
+                      <td>
+                        {r.first_name} {r.last_name}
+                      </td>
+                      <td>
+                        {r.created_at
+                          ? new Date(r.created_at).toLocaleString(undefined, {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
+                          : '—'}
+                      </td>
+                      <td>
+                        <span
+                          className={`registration-leaderboard__status registration-leaderboard__status--${(r.status || 'awaiting_confirmation').toLowerCase().replace(' ', '_')}`}
+                        >
+                          {(r.status || 'awaiting_confirmation').replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
       <p className="registration-page__admin-link">
         <Link to="/admin/registrations">Admin</Link>
       </p>

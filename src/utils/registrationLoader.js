@@ -134,6 +134,42 @@ export const deleteRegistration = async (id, adminKey) => {
 };
 
 /**
+ * Fetch whether participants list is shown on public registration page
+ */
+export const fetchShowParticipants = async () => {
+  try {
+    const response = await fetch(`${API_BASE}/v1/sports/cricket/registration/show-participants`);
+    if (!response.ok) return false;
+    const result = await response.json();
+    return !!result.show;
+  } catch (error) {
+    console.error('Error fetching show participants setting:', error);
+    return false;
+  }
+};
+
+/**
+ * Update whether participants list is shown on public registration page (admin only)
+ * @param {boolean} show - Whether to show the list
+ * @param {string} adminKey - Admin secret
+ */
+export const updateShowParticipants = async (show, adminKey) => {
+  const response = await fetch(`${API_BASE}/v1/sports/cricket/registration/show-participants`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Admin-Key': adminKey,
+    },
+    body: JSON.stringify({ show }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.detail || `HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+};
+
+/**
  * Update registration status (admin only)
  * @param {number} id - Registration ID
  * @param {string} status - New status (awaiting_confirmation, registered, rejected, cancelled)
