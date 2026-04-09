@@ -165,7 +165,8 @@ const MenuBar = () => {
     if (menu.key === 'statboard') {
       return path.startsWith(entityPrefix) &&
         !path.endsWith('/profile') &&
-        !path.endsWith('/cpl_rules');
+        !path.endsWith('/cpl_rules') &&
+        !path.endsWith('/cpl_x_schedule');
     }
     if (menu.key === 'register') return path.startsWith('/cpl/register');
     if (menu.key === 'profile') return path.endsWith('/profile');

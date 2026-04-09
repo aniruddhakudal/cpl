@@ -27,6 +27,8 @@
   --accent-hover: #4338ca;
   --disabled-bg: #f1f5f9;
   --error-color: #dc2626;
+  --schedule-stripe-a: #ffffff;
+  --schedule-stripe-b: #f1f5f9;
 }
 
 /* Dark Theme */
@@ -52,6 +54,8 @@
   --accent-hover: #7a8ef0;
   --disabled-bg: #2a2a3e;
   --error-color: #ff6b6b;
+  --schedule-stripe-a: rgba(38, 38, 58, 0.65);
+  --schedule-stripe-b: rgba(30, 30, 46, 0.9);
 }
 
 body {

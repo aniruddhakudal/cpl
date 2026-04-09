@@ -1,6 +1,7 @@
 import { Routes, Route, useParams, Navigate } from 'react-router-dom';
 import MenuBar from './components/MenuBar';
 import CPLRulesPage from './pages/CPLRulesPage';
+import CplXSchedulePage from './pages/CplXSchedulePage';
 import StatsPage from './pages/StatsPage';
 import ProfilePage from './pages/ProfilePage';
 import CelebriaHomePage from './pages/CelebriaHomePage';
@@ -87,10 +88,22 @@ function App() {
                   </RedirectIfNotCelebria>
                 }
               />
+              <Route
+                path="/sports/cricket/:entity/:cohort/cpl_x_schedule"
+                element={
+                  <RedirectIfNotCelebria>
+                    <CplXSchedulePage />
+                  </RedirectIfNotCelebria>
+                }
+              />
               <Route path="/celebria" element={<Navigate to="/" replace />} />
               <Route path="/celebria/:cohort" element={<RedirectCelebriaCohort />} />
               <Route path="/celebria/:cohort/profile" element={<RedirectCelebriaCohort suffix="/profile" />} />
               <Route path="/celebria/:cohort/cpl_rules" element={<RedirectCelebriaCohort suffix="/cpl_rules" />} />
+              <Route
+                path="/celebria/:cohort/cpl_x_schedule"
+                element={<RedirectCelebriaCohort suffix="/cpl_x_schedule" />}
+              />
             </>
           ) : (
             <>
