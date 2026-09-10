@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -22,13 +21,10 @@ const handleWatcherErrors = () => {
 }
 
 export default defineConfig({
-  plugins: [
-    // react({
-    //  jsxRuntime: 'automatic',
-    //  fastRefresh: false  // Disable Fast Refresh to prevent RefreshRuntime conflicts
-    //}), 
-    handleWatcherErrors()
-  ],
+  plugins: [handleWatcherErrors()],
+  esbuild: {
+    jsx: 'automatic'
+  },
   root: __dirname,
   build: {
     outDir: 'dist',

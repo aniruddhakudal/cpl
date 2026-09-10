@@ -1,9 +1,11 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getAllSeasonsData } from './utils/dataLoader';
 import Dashboard from './components/Dashboard';
 import CPLRulesPage from './pages/CPLRulesPage';
 import MenBattingStatsPage from './pages/MenBattingStatsPage';
+import RegistrationPage from './pages/RegistrationPage';
+import ParticipantsListPage from './pages/ParticipantsListPage';
 import TournamentSelector from './components/TournamentSelector';
 import SeasonSelector from './components/SeasonSelector';
 import StatSelector from './components/StatSelector';
@@ -14,7 +16,19 @@ function HomePage() {
   return (
     <div className="home-page">
       <ThemeToggle />
-      <h1 className="home-page__title">Welcome to Crickipedia Stats</h1>
+      <div className="home-page__content">
+        <h1 className="home-page__title">Celebria Ganpati Festival 2026</h1>
+        <div className="home-page__actions">
+          <Link to="/ganpati/2026/registration" className="home-page__btn">
+            Registration
+          </Link>
+          <Link to="/ganpati/2026/participants" className="home-page__btn">
+            Participants
+          </Link>
+          <button type="button" className="home-page__btn">Schedule</button>
+          <button type="button" className="home-page__btn">Expenses</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -124,7 +138,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/sports/cricket/adults/dashboard" element={<DashboardPage />} />
+      <Route path="/ganpati/2026/registration" element={<RegistrationPage />} />
+      <Route path="/ganpati/2026/participants" element={<ParticipantsListPage />} />
       <Route path="/sports/cricket/adults/cpl_rules" element={<CPLRulesPage />} />
       <Route path="/sports/cricket/:entity/:cohort" element={<MenBattingStatsPage />} />
     </Routes>
