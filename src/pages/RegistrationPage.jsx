@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
+import ScheduleButton from '../components/ScheduleButton';
 import { API_BASE_URL } from '../config/api';
 import { validatePhoneNumber } from '../utils/registrationsApi';
 import { BUILDING_OPTIONS } from '../utils/buildingOptions';
@@ -105,9 +106,12 @@ const RegistrationPage = () => {
         </Link>
         <h1 className="registration-title">Celebria Ganpati Festival 2026</h1>
         <p className="registration-subtitle">Registration</p>
-        <Link to="/ganpati/2026/participants" className="registration-back-link">
-          View Registered Participants
-        </Link>
+        <div className="registration-nav-links">
+          <Link to="/ganpati/2026/participants" className="registration-back-link">
+            View Registered Participants
+          </Link>
+          <ScheduleButton className="registration-back-link">View Schedule</ScheduleButton>
+        </div>
       </header>
 
       <main className="registration-content">

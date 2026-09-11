@@ -37,7 +37,9 @@
 }
 
 .home-page__btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 2rem;
   font-size: 1rem;
   font-weight: 600;
@@ -47,8 +49,14 @@
   border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
+  text-align: center;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+}
+
+button.home-page__btn {
+  font-family: inherit;
+  line-height: inherit;
 }
 
 .home-page__btn:hover {

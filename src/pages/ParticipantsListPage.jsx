@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
+import ScheduleButton from '../components/ScheduleButton';
 import { BUILDING_OPTIONS } from '../utils/buildingOptions';
 import { FESTIVAL_EVENTS } from '../utils/ganpatiEvents';
 import {
@@ -227,6 +228,7 @@ const ParticipantsListPage = () => {
         </Link>
         <h1 className="participants-title">Celebria Ganpati Festival 2026</h1>
         <p className="participants-subtitle">Registered Participants</p>
+        <ScheduleButton className="participants-back-link">View Schedule</ScheduleButton>
       </header>
 
       <main className="participants-content">

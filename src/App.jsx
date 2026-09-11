@@ -6,6 +6,7 @@ import CPLRulesPage from './pages/CPLRulesPage';
 import MenBattingStatsPage from './pages/MenBattingStatsPage';
 import RegistrationPage from './pages/RegistrationPage';
 import ParticipantsListPage from './pages/ParticipantsListPage';
+import ScheduleButton from './components/ScheduleButton';
 import TournamentSelector from './components/TournamentSelector';
 import SeasonSelector from './components/SeasonSelector';
 import StatSelector from './components/StatSelector';
@@ -25,12 +26,7 @@ function HomePage() {
           <Link to="/ganpati/2026/participants" className="home-page__btn">
             Participants
           </Link>
-          <div className="home-page__soon-item">
-            <button type="button" className="home-page__btn home-page__btn--soon" disabled>
-              Schedule
-            </button>
-            <span className="home-page__soon-tag">Coming soon</span>
-          </div>
+          <ScheduleButton className="home-page__btn" />
           <div className="home-page__soon-item">
             <button type="button" className="home-page__btn home-page__btn--soon" disabled>
               Expenses
