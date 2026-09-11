@@ -25,8 +25,14 @@ function HomePage() {
           <Link to="/ganpati/2026/participants" className="home-page__btn">
             Participants
           </Link>
-          <button type="button" className="home-page__btn">Schedule</button>
-          <button type="button" className="home-page__btn">Expenses</button>
+          <button type="button" className="home-page__btn home-page__btn--soon" disabled>
+            Schedule
+            <span className="home-page__soon-tag">Coming soon</span>
+          </button>
+          <button type="button" className="home-page__btn home-page__btn--soon" disabled>
+            Expenses
+            <span className="home-page__soon-tag">Coming soon</span>
+          </button>
         </div>
       </div>
     </div>

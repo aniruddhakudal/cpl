@@ -61,6 +61,34 @@
   transform: translateY(0);
 }
 
+.home-page__btn--soon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: not-allowed;
+  border-color: rgba(255, 215, 0, 0.75);
+  background: rgba(255, 215, 0, 0.12);
+}
+
+.home-page__btn--soon:hover {
+  transform: none;
+  box-shadow: none;
+  background: rgba(255, 215, 0, 0.12);
+}
+
+.home-page__soon-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  background: linear-gradient(135deg, #ffd700, #ffb347);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.45);
+}
+
 @media (max-width: 768px) {
   .home-page__btn {
     padding: 0.6rem 1.4rem;
