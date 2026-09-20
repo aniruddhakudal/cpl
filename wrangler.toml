@@ -1,6 +1,9 @@
 name = "cpl-frontend"
-compatibility_date = "2026-01-20"
+compatibility_date = "2026-03-01"
 
 [assets]
 directory = "./dist"
 not_found_handling = "single-page-application"
+
+# Do not add public/_redirects or dist/_redirects with /* /index.html 200 —
+# it conflicts with not_found_handling and fails deploy (CF error 100324).
