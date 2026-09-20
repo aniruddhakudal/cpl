@@ -22,7 +22,32 @@ function HomePage() {
     <div className="home-page ganpati-theme">
       <ThemeToggle />
       <div className="home-page__content">
+        <div className="home-page__gallery">
+          <img
+            src="/images/ganpati_1.jpg"
+            alt="Celebria Ganpati Festival celebration"
+            className="home-page__photo"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
         <h1 className="home-page__title">Celebria Ganpati Festival 2026</h1>
+        <div className="home-page__message">
+          <p>
+            This year&apos;s Ganesh Festival focused on women&apos;s empowerment, and it was
+            wonderful to see the women and kids of Celebria confidently lead and manage the
+            events. A big thank you to the gentlemen for supporting from the sidelines and
+            encouraging them to take charge.
+          </p>
+          <p>
+            The energy, enthusiasm, and spirit of all Celebrians were truly inspiring.
+            Let&apos;s keep this spirit alive every year and continue bringing generations
+            together.
+          </p>
+          <p className="home-page__message-cheer">
+            Three cheers for Celebria and the amazing spirit of its residents! 🎉👏🎉
+          </p>
+        </div>
         <div className="home-page__actions">
           <Link to="/ganpati/2026/registration" className="home-page__btn">
             Registration

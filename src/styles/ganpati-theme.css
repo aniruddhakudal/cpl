@@ -58,6 +58,23 @@
   letter-spacing: 0.02em;
 }
 
+.ganpati-theme .home-page__message {
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  background: rgba(255, 252, 248, 0.14);
+  border: 1px solid rgba(255, 237, 213, 0.3);
+  color: #fffaf5;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(6px);
+}
+
+:root[data-theme='dark'] .ganpati-theme .home-page__message {
+  background: rgba(0, 0, 0, 0.32);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: #faf5f0;
+}
+
 .ganpati-theme .home-page__btn {
   border-color: rgba(255, 237, 213, 0.75);
   background: rgba(255, 255, 255, 0.12);
@@ -66,6 +83,30 @@
 .ganpati-theme .home-page__btn:hover {
   background: rgba(255, 237, 213, 0.22);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.ganpati-theme .home-page__gallery {
+  padding: 0.65rem;
+  border-radius: 16px;
+  background: rgba(255, 252, 248, 0.12);
+  border: 1px solid rgba(255, 237, 213, 0.35);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(6px);
+}
+
+.ganpati-theme .home-page__photo {
+  border: 2px solid rgba(255, 237, 213, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme='dark'] .ganpati-theme .home-page__gallery {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgba(245, 158, 11, 0.28);
+}
+
+:root[data-theme='dark'] .ganpati-theme .home-page__photo {
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
 }
 
 /* Inner pages — header band */
@@ -103,7 +144,11 @@
 @media (max-width: 768px) {
   .ganpati-theme .home-page__content {
     gap: 1.5rem;
-    padding: 0 1rem 2rem;
+    padding: 4.5rem 1rem 2rem;
+  }
+
+  .ganpati-theme .home-page__gallery {
+    padding: 0.5rem;
   }
 
   .ganpati-theme .home-page__actions {

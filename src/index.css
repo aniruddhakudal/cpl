@@ -4,9 +4,8 @@
   box-sizing: border-box;
 }
 
-/* Light Theme (Default) */
-:root[data-theme='light'],
-:root {
+/* Light Theme */
+:root[data-theme='light'] {
   --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --bg-secondary: rgba(255, 255, 255, 0.95);
   --bg-tertiary: rgba(255, 255, 255, 0.8);
@@ -28,8 +27,9 @@
   --error-color: #e74c3c;
 }
 
-/* Dark Theme */
-:root[data-theme='dark'] {
+/* Dark Theme (default) */
+:root[data-theme='dark'],
+:root {
   --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   --bg-secondary: rgba(30, 30, 46, 0.95);
   --bg-tertiary: rgba(30, 30, 46, 0.8);
