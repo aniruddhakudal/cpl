@@ -8,6 +8,7 @@ import RegistrationPage from './pages/RegistrationPage';
 import ParticipantsListPage from './pages/ParticipantsListPage';
 import ExpensesPage from './pages/ExpensesPage';
 import AwardeesPage from './pages/AwardeesPage';
+import FeedbackPage from './pages/FeedbackPage';
 import ScheduleButton from './components/ScheduleButton';
 import OrganizersButton from './components/OrganizersButton';
 import TournamentSelector from './components/TournamentSelector';
@@ -36,6 +37,9 @@ function HomePage() {
           </Link>
           <Link to="/ganpati/2026/awardees" className="home-page__btn">
             Awardees
+          </Link>
+          <Link to="/ganpati/2026/feedback" className="home-page__btn">
+            Feedback
           </Link>
         </div>
       </div>
@@ -152,6 +156,7 @@ function App() {
       <Route path="/ganpati/2026/participants" element={<ParticipantsListPage />} />
       <Route path="/ganpati/2026/expenses" element={<ExpensesPage />} />
       <Route path="/ganpati/2026/awardees" element={<AwardeesPage />} />
+      <Route path="/ganpati/2026/feedback" element={<FeedbackPage />} />
       <Route path="/sports/cricket/adults/cpl_rules" element={<CPLRulesPage />} />
       <Route path="/sports/cricket/:entity/:cohort" element={<MenBattingStatsPage />} />
     </Routes>

@@ -72,14 +72,16 @@
 .ganpati-theme .registration-header,
 .ganpati-theme .participants-header,
 .ganpati-theme .expenses-header,
-.ganpati-theme .awardees-header {
+.ganpati-theme .awardees-header,
+.ganpati-theme .feedback-header {
   border-bottom: 3px solid var(--ganpati-header-accent);
 }
 
 .ganpati-theme .registration-page,
 .ganpati-theme .participants-page,
 .ganpati-theme .expenses-page,
-.ganpati-theme .awardees-page {
+.ganpati-theme .awardees-page,
+.ganpati-theme .feedback-page {
   background: var(--bg-primary);
 }
 
@@ -120,7 +122,8 @@
   .ganpati-theme .registration-header,
   .ganpati-theme .participants-header,
   .ganpati-theme .expenses-header,
-  .ganpati-theme .awardees-header {
+  .ganpati-theme .awardees-header,
+  .ganpati-theme .feedback-header {
     padding: 1.5rem 1rem 1.25rem;
   }
 }
