@@ -1,3 +1,8 @@
+export const EVENT_NOTES = {
+  Badminton:
+    'Note: Badminton Registration will close on 15th Sept. There will be a nominal charge for the participants.',
+};
+
 export const FESTIVAL_EVENTS = [
   '1 Min Games',
   'Antakshari',

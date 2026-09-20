@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 import ScheduleButton from '../components/ScheduleButton';
 import { API_BASE_URL } from '../config/api';
-import { validatePhoneNumber } from '../utils/registrationsApi';
+import { getNetworkErrorMessage, validatePhoneNumber } from '../utils/registrationsApi';
 import { BUILDING_OPTIONS } from '../utils/buildingOptions';
-import { FESTIVAL_EVENTS } from '../utils/ganpatiEvents';
+import { EVENT_NOTES, FESTIVAL_EVENTS } from '../utils/ganpatiEvents';
 import './RegistrationPage.css';
 
 const initialFormState = {
@@ -89,7 +89,7 @@ const RegistrationPage = () => {
       setSubmitted(true);
       setForm(initialFormState);
     } catch (error) {
-      setSubmitError(error.message || 'Failed to submit registration. Please try again.');
+      setSubmitError(getNetworkErrorMessage(error));
       setSubmitted(false);
     } finally {
       setSubmitting(false);
@@ -97,7 +97,7 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="registration-page">
+    <div className="registration-page ganpati-theme">
       <ThemeToggle />
 
       <header className="registration-header">
@@ -197,14 +197,19 @@ const RegistrationPage = () => {
             <legend>Select One or More Events</legend>
             <div className="registration-events-list">
               {FESTIVAL_EVENTS.map((eventName) => (
-                <label key={eventName} className="registration-event-option">
-                  <input
-                    type="checkbox"
-                    checked={form.events.includes(eventName)}
-                    onChange={() => toggleEvent(eventName)}
-                  />
-                  <span>{eventName}</span>
-                </label>
+                <div key={eventName} className="registration-event-item">
+                  <label className="registration-event-option">
+                    <input
+                      type="checkbox"
+                      checked={form.events.includes(eventName)}
+                      onChange={() => toggleEvent(eventName)}
+                    />
+                    <span>{eventName}</span>
+                  </label>
+                  {EVENT_NOTES[eventName] && (
+                    <p className="registration-event-note">{EVENT_NOTES[eventName]}</p>
+                  )}
+                </div>
               ))}
             </div>
             {eventError && (

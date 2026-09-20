@@ -1,0 +1,118 @@
+.receipt-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.receipt-modal__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(960px, 100%);
+  max-height: calc(100vh - 3rem);
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--bg-card);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+.receipt-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.receipt-modal__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.receipt-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.receipt-modal__download {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--accent-primary);
+  border-radius: 8px;
+  background: var(--accent-primary);
+  color: #fff;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.receipt-modal__download:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.receipt-modal__download:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.receipt-modal__close {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.receipt-modal__close:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.receipt-modal__error {
+  margin: 0;
+  padding: 0.65rem 1.25rem;
+  color: var(--error-color);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.receipt-modal__content {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  background: var(--bg-secondary);
+}
+
+.receipt-modal__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.receipt-modal__pdf {
+  display: block;
+  width: 100%;
+  min-height: 70vh;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+}

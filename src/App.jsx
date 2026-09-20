@@ -6,7 +6,10 @@ import CPLRulesPage from './pages/CPLRulesPage';
 import MenBattingStatsPage from './pages/MenBattingStatsPage';
 import RegistrationPage from './pages/RegistrationPage';
 import ParticipantsListPage from './pages/ParticipantsListPage';
+import ExpensesPage from './pages/ExpensesPage';
+import AwardeesPage from './pages/AwardeesPage';
 import ScheduleButton from './components/ScheduleButton';
+import OrganizersButton from './components/OrganizersButton';
 import TournamentSelector from './components/TournamentSelector';
 import SeasonSelector from './components/SeasonSelector';
 import StatSelector from './components/StatSelector';
@@ -15,7 +18,7 @@ import './App.css';
 
 function HomePage() {
   return (
-    <div className="home-page">
+    <div className="home-page ganpati-theme">
       <ThemeToggle />
       <div className="home-page__content">
         <h1 className="home-page__title">Celebria Ganpati Festival 2026</h1>
@@ -27,12 +30,13 @@ function HomePage() {
             Participants
           </Link>
           <ScheduleButton className="home-page__btn" />
-          <div className="home-page__soon-item">
-            <button type="button" className="home-page__btn home-page__btn--soon" disabled>
-              Expenses
-            </button>
-            <span className="home-page__soon-tag">Coming soon</span>
-          </div>
+          <OrganizersButton className="home-page__btn" />
+          <Link to="/ganpati/2026/expenses" className="home-page__btn">
+            Expenses
+          </Link>
+          <Link to="/ganpati/2026/awardees" className="home-page__btn">
+            Awardees
+          </Link>
         </div>
       </div>
     </div>
@@ -146,6 +150,8 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/ganpati/2026/registration" element={<RegistrationPage />} />
       <Route path="/ganpati/2026/participants" element={<ParticipantsListPage />} />
+      <Route path="/ganpati/2026/expenses" element={<ExpensesPage />} />
+      <Route path="/ganpati/2026/awardees" element={<AwardeesPage />} />
       <Route path="/sports/cricket/adults/cpl_rules" element={<CPLRulesPage />} />
       <Route path="/sports/cricket/:entity/:cohort" element={<MenBattingStatsPage />} />
     </Routes>

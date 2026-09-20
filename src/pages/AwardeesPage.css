@@ -1,0 +1,300 @@
+.awardees-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding-bottom: 2rem;
+}
+
+.awardees-header {
+  background: var(--bg-secondary);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.awardees-back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.awardees-back-link:hover {
+  text-decoration: underline;
+}
+
+.awardees-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.awardees-subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.awardees-content {
+  max-width: 1200px;
+  margin: 2rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.awardees-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.awardees-count {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.awardees-admin-login {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.awardees-admin-login label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.awardees-admin-login-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.awardees-admin-login-row input {
+  flex: 1;
+  min-width: 12rem;
+  padding: 0.6rem 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.awardees-admin-login-row button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.awardees-admin-message {
+  margin: 0.75rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.awardees-admin-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-card);
+  font-weight: 600;
+}
+
+.awardees-admin-logout {
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--error-color);
+  background: var(--error-color);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.awardees-form-section {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.awardees-form-section h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.awardees-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.awardees-field label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.awardees-field input,
+.awardees-field select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.awardees-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.awardees-form-actions button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.awardees-form-actions button[type='button'] {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.awardees-error {
+  color: var(--error-color);
+  margin: 0;
+}
+
+.awardees-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem 1rem;
+}
+
+.awardees-table-wrap {
+  overflow-x: auto;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+}
+
+.awardees-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+.awardees-table th,
+.awardees-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.awardees-table th {
+  font-weight: 700;
+  background: var(--bg-tertiary);
+}
+
+.awardees-name-with-medal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.awardees-medal {
+  flex-shrink: 0;
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.awardees-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.awardees-actions button {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.awardees-delete-btn {
+  border-color: var(--error-color) !important;
+  color: var(--error-color) !important;
+}
+
+.awardees-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.awardees-modal {
+  width: min(480px, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card-hover);
+}
+
+.awardees-modal h2 {
+  margin: 0 0 1rem;
+  color: var(--text-primary);
+}
+
+@media (max-width: 640px) {
+  .awardees-content {
+    padding: 0 1rem;
+  }
+
+  .awardees-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .awardees-table th,
+  .awardees-table td {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}

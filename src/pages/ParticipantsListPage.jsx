@@ -219,7 +219,7 @@ const ParticipantsListPage = () => {
   };
 
   return (
-    <div className="participants-page">
+    <div className="participants-page ganpati-theme">
       <ThemeToggle />
 
       <header className="participants-header">
@@ -261,7 +261,7 @@ const ParticipantsListPage = () => {
         {isAdmin && (
           <div className="participants-admin-banner">
             <span>Admin mode enabled</span>
-            <button type="button" onClick={handleAdminLogout}>
+            <button type="button" className="participants-admin-logout" onClick={handleAdminLogout}>
               Log out
             </button>
           </div>

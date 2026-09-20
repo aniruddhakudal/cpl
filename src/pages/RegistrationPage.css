@@ -127,6 +127,23 @@ button.registration-back-link {
   gap: 0.75rem;
 }
 
+.registration-event-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.registration-event-note {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text-primary);
+  background: rgba(102, 126, 234, 0.12);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: 0 6px 6px 0;
+}
+
 .registration-event-option {
   display: flex;
   align-items: center;

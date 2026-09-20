@@ -137,12 +137,21 @@ button.participants-back-link {
   color: var(--text-primary);
 }
 
-.participants-admin-banner button {
+.participants-admin-logout {
   padding: 0.45rem 0.9rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--error-color);
   border-radius: 8px;
-  background: var(--bg-secondary);
+  background: var(--error-color);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
   cursor: pointer;
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.participants-admin-logout:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.35);
 }
 
 .participants-error {

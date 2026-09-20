@@ -4,6 +4,16 @@ export const ADMIN_KEY_STORAGE = 'ganpati_admin_key';
 
 const REGISTRATIONS_URL = `${API_BASE_URL}/v1/ganpati/2026/registrations`;
 
+export function getNetworkErrorMessage(error) {
+  if (error instanceof TypeError && error.message === 'Failed to fetch') {
+    return (
+      'Cannot reach the registration API. Start the backend with ' +
+      '`python main.py` in backend/v1.0.4/cpl-backend/api, then restart the frontend dev server.'
+    );
+  }
+  return error?.message || 'Request failed. Please try again.';
+}
+
 function buildHeaders(adminKey) {
   const headers = { 'Content-Type': 'application/json' };
   if (adminKey) {
@@ -26,28 +36,34 @@ async function parseResponse(response) {
   return result;
 }
 
+async function request(url, options) {
+  try {
+    const response = await fetch(url, options);
+    return parseResponse(response);
+  } catch (error) {
+    throw new Error(getNetworkErrorMessage(error));
+  }
+}
+
 export async function fetchRegistrations(adminKey = '') {
-  const response = await fetch(REGISTRATIONS_URL, {
+  return request(REGISTRATIONS_URL, {
     headers: buildHeaders(adminKey),
   });
-  return parseResponse(response);
 }
 
 export async function updateRegistration(id, payload, adminKey) {
-  const response = await fetch(`${REGISTRATIONS_URL}/${id}`, {
+  return request(`${REGISTRATIONS_URL}/${id}`, {
     method: 'PATCH',
     headers: buildHeaders(adminKey),
     body: JSON.stringify(payload),
   });
-  return parseResponse(response);
 }
 
 export async function deleteRegistration(id, adminKey) {
-  const response = await fetch(`${REGISTRATIONS_URL}/${id}`, {
+  return request(`${REGISTRATIONS_URL}/${id}`, {
     method: 'DELETE',
     headers: buildHeaders(adminKey),
   });
-  return parseResponse(response);
 }
 
 const PHONE_NUMBER_PATTERN = /^\d{10}$/;

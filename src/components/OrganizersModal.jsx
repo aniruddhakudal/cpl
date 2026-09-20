@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import scheduleImage from '../assets/images/schedule_2026.jpeg';
+import organizersImage from '../assets/images/organizers_2026.jpeg';
 import './ScheduleModal.css';
 
-const ScheduleModal = ({ isOpen, onClose }) => {
+const OrganizersModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -30,7 +30,7 @@ const ScheduleModal = ({ isOpen, onClose }) => {
       className="schedule-modal ganpati-theme"
       role="dialog"
       aria-modal="true"
-      aria-label="Festival Schedule 2026"
+      aria-label="Festival Organizers 2026"
       onClick={onClose}
     >
       <div className="schedule-modal__panel" onClick={(event) => event.stopPropagation()}>
@@ -38,13 +38,13 @@ const ScheduleModal = ({ isOpen, onClose }) => {
           type="button"
           className="schedule-modal__close"
           onClick={onClose}
-          aria-label="Close schedule"
+          aria-label="Close organizers"
         >
           ×
         </button>
         <img
-          src={scheduleImage}
-          alt="Celebria Ganpati Festival 2026 schedule"
+          src={organizersImage}
+          alt="Celebria Ganpati Festival 2026 organizers"
           className="schedule-modal__image"
         />
       </div>
@@ -52,4 +52,4 @@ const ScheduleModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default ScheduleModal;
+export default OrganizersModal;
