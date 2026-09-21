@@ -47,6 +47,7 @@ const ExpensesPage = () => {
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [formSuccess, setFormSuccess] = useState('');
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
   const [actionExpense, setActionExpense] = useState(null);
   const [actionType, setActionType] = useState('');
@@ -264,12 +265,27 @@ const ExpensesPage = () => {
           ? `Expense submitted. Note: ${warnings[0]}`
           : 'Expense submitted for approval.',
       );
+      setSubmitModalOpen(false);
       await loadExpenses();
     } catch (err) {
       setFormError(err.message || 'Failed to submit expense.');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const openSubmitModal = () => {
+    setFormError('');
+    setFormSuccess('');
+    setContactError('');
+    setSubmitModalOpen(true);
+  };
+
+  const closeSubmitModal = () => {
+    if (submitting) return;
+    setSubmitModalOpen(false);
+    setFormError('');
+    setContactError('');
   };
 
   const openApprove = (expense) => {
@@ -396,93 +412,12 @@ const ExpensesPage = () => {
       </header>
 
       <main className="expenses-content">
-        <section className="expenses-form-section">
-          <h2>Submit Expense</h2>
-          <p className="expenses-form-note">
-            Anyone can submit an expense. Admin approval is required. Default status is Pending.
-          </p>
-          <form className="expenses-form" onSubmit={handleCreateSubmit}>
-            <div className="expenses-field">
-              <label htmlFor="description">Description</label>
-              <input
-                id="description"
-                type="text"
-                value={form.description}
-                onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
-                required
-              />
-            </div>
-            <div className="expenses-field-row">
-              <div className="expenses-field">
-                <label htmlFor="made_by">Paid By</label>
-                <input
-                  id="made_by"
-                  type="text"
-                  value={form.made_by}
-                  onChange={(e) => setForm((prev) => ({ ...prev, made_by: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="expenses-field">
-                <label htmlFor="amount">Amount (₹)</label>
-                <input
-                  id="amount"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={form.amount}
-                  onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
-                  required
-                />
-              </div>
-            </div>
-            <div className="expenses-field-row">
-              <div className="expenses-field">
-                <label htmlFor="expense_date">Expense Date</label>
-                <input
-                  id="expense_date"
-                  type="date"
-                  value={form.expense_date}
-                  onChange={(e) => setForm((prev) => ({ ...prev, expense_date: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="expenses-field">
-                <label htmlFor="submitter_contact">UPI ID or UPI phone number</label>
-                <input
-                  id="submitter_contact"
-                  type="text"
-                  value={form.submitter_contact}
-                  onChange={(e) => {
-                    setContactError('');
-                    setForm((prev) => ({ ...prev, submitter_contact: e.target.value }));
-                  }}
-                  required
-                  maxLength={256}
-                  autoComplete="off"
-                  placeholder="e.g. name@paytm or 10-digit mobile"
-                />
-                {contactError && <p className="expenses-error">{contactError}</p>}
-              </div>
-            </div>
-            {renderReceiptPicker(
-              receiptFiles,
-              setReceiptFiles,
-              3,
-              'receipts',
-              'Click Choose File up to 3 times to add one receipt each, or select multiple in one go.',
-            )}
-            <button type="submit" className="expenses-submit" disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Submit Expense'}
-            </button>
-            {formSuccess && <p className="expenses-success">{formSuccess}</p>}
-            {formError && <p className="expenses-error" role="alert">{formError}</p>}
-          </form>
-        </section>
-
         <section className="expenses-list-section">
           <div className="expenses-toolbar">
             <h2>All Expenses</h2>
+            <button type="button" className="expenses-submit-open" onClick={openSubmitModal}>
+              Submit expense
+            </button>
             <div className="expenses-controls">
               <label>
                 Status
@@ -511,6 +446,8 @@ const ExpensesPage = () => {
               </label>
             </div>
           </div>
+
+          {formSuccess && <p className="expenses-success expenses-success--banner">{formSuccess}</p>}
 
           {!isAdmin && (
             <form className="expenses-admin-login" onSubmit={handleAdminLogin}>
@@ -653,6 +590,104 @@ const ExpensesPage = () => {
           )}
         </section>
       </main>
+
+      {submitModalOpen && (
+        <div className="expenses-modal-overlay" onClick={closeSubmitModal}>
+          <div
+            className="expenses-modal expenses-modal--wide"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="submit-expense-title"
+          >
+            <h2 id="submit-expense-title">Submit expense</h2>
+            <p className="expenses-form-note">
+              Anyone can submit an expense. Admin approval is required. Default status is Pending.
+            </p>
+            <form className="expenses-form" onSubmit={handleCreateSubmit}>
+              <div className="expenses-field">
+                <label htmlFor="description">Description</label>
+                <input
+                  id="description"
+                  type="text"
+                  value={form.description}
+                  onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="expenses-field-row">
+                <div className="expenses-field">
+                  <label htmlFor="made_by">Paid By</label>
+                  <input
+                    id="made_by"
+                    type="text"
+                    value={form.made_by}
+                    onChange={(e) => setForm((prev) => ({ ...prev, made_by: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="expenses-field">
+                  <label htmlFor="amount">Amount (₹)</label>
+                  <input
+                    id="amount"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={form.amount}
+                    onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="expenses-field-row">
+                <div className="expenses-field">
+                  <label htmlFor="expense_date">Expense Date</label>
+                  <input
+                    id="expense_date"
+                    type="date"
+                    value={form.expense_date}
+                    onChange={(e) => setForm((prev) => ({ ...prev, expense_date: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="expenses-field">
+                  <label htmlFor="submitter_contact">UPI ID or UPI phone number</label>
+                  <input
+                    id="submitter_contact"
+                    type="text"
+                    value={form.submitter_contact}
+                    onChange={(e) => {
+                      setContactError('');
+                      setForm((prev) => ({ ...prev, submitter_contact: e.target.value }));
+                    }}
+                    required
+                    maxLength={256}
+                    autoComplete="off"
+                    placeholder="e.g. name@paytm or 10-digit mobile"
+                  />
+                  {contactError && <p className="expenses-error">{contactError}</p>}
+                </div>
+              </div>
+              {renderReceiptPicker(
+                receiptFiles,
+                setReceiptFiles,
+                3,
+                'receipts',
+                'Click Choose File up to 3 times to add one receipt each, or select multiple in one go.',
+              )}
+              {formError && <p className="expenses-error" role="alert">{formError}</p>}
+              <div className="expenses-modal-actions">
+                <button type="button" onClick={closeSubmitModal} disabled={submitting}>
+                  Cancel
+                </button>
+                <button type="submit" className="expenses-submit" disabled={submitting}>
+                  {submitting ? 'Submitting...' : 'Submit expense'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {actionExpense && (
         <div className="expenses-modal-overlay" onClick={closeActionModal}>

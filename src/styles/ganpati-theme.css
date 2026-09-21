@@ -140,6 +140,29 @@
   background: rgba(0, 0, 0, 0.7);
 }
 
+/* Expense modals — solid panel on dark gradient (avoids see-through overlap) */
+:root[data-theme='dark'] .ganpati-theme .expenses-modal-overlay {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+:root[data-theme='dark'] .ganpati-theme .expenses-modal {
+  background: #1a1212;
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75);
+}
+
+:root[data-theme='dark'] .ganpati-theme .expenses-modal .expenses-field input,
+:root[data-theme='dark'] .ganpati-theme .expenses-modal .expenses-modal-field input,
+:root[data-theme='dark'] .ganpati-theme .expenses-modal .expenses-modal-field textarea,
+:root[data-theme='dark'] .ganpati-theme .expenses-modal .expenses-file-list li {
+  background: #261a1a;
+  border-color: rgba(245, 158, 11, 0.28);
+}
+
+:root[data-theme='dark'] .ganpati-theme .expenses-modal .expenses-form-note {
+  color: #d6d3d1;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .ganpati-theme .home-page__content {
