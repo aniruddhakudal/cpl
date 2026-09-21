@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import AwardeeCeremonySlideshow from '../components/AwardeeCeremonySlideshow';
 import ThemeToggle from '../components/ThemeToggle';
 import { SORTED_AWARDEE_EVENTS, sortAwardeeRecords } from '../utils/awardeeEvents';
 import {
@@ -31,6 +32,7 @@ const AwardeesPage = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [editForm, setEditForm] = useState(emptyForm);
   const [editError, setEditError] = useState('');
+  const [ceremonyOpen, setCeremonyOpen] = useState(false);
 
   const sortedAwardees = useMemo(() => sortAwardeeRecords(awardees), [awardees]);
 
@@ -207,6 +209,14 @@ const AwardeesPage = () => {
           <p className="awardees-count">
             {loading ? 'Loading...' : `${sortedAwardees.length} award(s)`}
           </p>
+          <button
+            type="button"
+            className="awardees-ceremony-open"
+            onClick={() => setCeremonyOpen(true)}
+            disabled={loading || sortedAwardees.length === 0}
+          >
+            Prize ceremony slideshow
+          </button>
         </div>
 
         {!isAdmin && (
@@ -349,6 +359,13 @@ const AwardeesPage = () => {
           </div>
         )}
       </main>
+
+      {ceremonyOpen && (
+        <AwardeeCeremonySlideshow
+          items={sortedAwardees}
+          onClose={() => setCeremonyOpen(false)}
+        />
+      )}
 
       {editingItem && (
         <div className="awardees-modal-overlay" onClick={closeEditModal}>

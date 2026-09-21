@@ -1,0 +1,238 @@
+.ceremony-slideshow {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 5.5rem;
+  color: #fff8e7;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.ceremony-slideshow__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(251, 191, 36, 0.35), transparent 55%),
+    radial-gradient(ellipse 90% 60% at 80% 100%, rgba(220, 38, 38, 0.25), transparent 50%),
+    linear-gradient(165deg, #1a0a0a 0%, #3d1212 35%, #5c1a0a 70%, #1a0a0a 100%);
+}
+
+.ceremony-slideshow__sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255, 215, 0, 0.9), transparent),
+    radial-gradient(2px 2px at 60% 70%, rgba(255, 237, 160, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 80% 20%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(2px 2px at 40% 85%, rgba(251, 191, 36, 0.75), transparent),
+    radial-gradient(1.5px 1.5px at 90% 55%, rgba(255, 255, 255, 0.6), transparent);
+  background-size: 100% 100%;
+  animation: ceremony-sparkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes ceremony-sparkle {
+  0% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.55;
+    transform: scale(1.02);
+  }
+}
+
+.ceremony-slideshow__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fde68a;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.ceremony-slideshow__close:hover {
+  background: rgba(0, 0, 0, 0.65);
+  border-color: #fbbf24;
+}
+
+.ceremony-slideshow__festive-tag {
+  margin: 0 0 1.25rem;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #fcd34d;
+  text-shadow: 0 0 24px rgba(251, 191, 36, 0.5);
+}
+
+.ceremony-slideshow__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(920px, 100%);
+  text-align: center;
+  animation: ceremony-slide-in 0.45s ease-out;
+}
+
+@keyframes ceremony-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ceremony-slideshow__event {
+  margin: 0 0 2.5rem;
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(251, 191, 36, 0.35);
+  padding: 0 0.5rem;
+}
+
+.ceremony-slideshow__honorees {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.75rem;
+  width: 100%;
+}
+
+.ceremony-slideshow__honoree {
+  padding: 1.75rem 1.25rem;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 215, 0, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.ceremony-slideshow__honoree--winner {
+  border-color: rgba(251, 191, 36, 0.65);
+  box-shadow:
+    0 8px 40px rgba(251, 191, 36, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ceremony-slideshow__role {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fde68a;
+}
+
+.ceremony-slideshow__medal {
+  display: block;
+  font-size: 2.5rem;
+  margin-bottom: 0.35rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+}
+
+.ceremony-slideshow__name {
+  margin: 0;
+  font-size: clamp(1.35rem, 3.5vw, 2rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.ceremony-slideshow__controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.55));
+}
+
+.ceremony-slideshow__progress {
+  min-width: 4.5rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fcd34d;
+}
+
+.ceremony-slideshow__nav {
+  padding: 0.65rem 1.35rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 215, 0, 0.45);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff8e7;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+}
+
+.ceremony-slideshow__nav:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.55);
+  border-color: #fbbf24;
+}
+
+.ceremony-slideshow__nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ceremony-slideshow__nav--primary {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  border-color: #fbbf24;
+  color: #1a0a0a;
+}
+
+.ceremony-slideshow__nav--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+@media (max-width: 520px) {
+  .ceremony-slideshow {
+    padding-bottom: 6rem;
+  }
+
+  .ceremony-slideshow__honorees {
+    grid-template-columns: 1fr;
+  }
+
+  .ceremony-slideshow__controls {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}

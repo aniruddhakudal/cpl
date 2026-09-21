@@ -163,6 +163,27 @@
   color: #d6d3d1;
 }
 
+/* Feedback modals — match expense modal treatment */
+:root[data-theme='dark'] .ganpati-theme .feedback-modal-overlay {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+:root[data-theme='dark'] .ganpati-theme .feedback-modal {
+  background: #1a1212;
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75);
+}
+
+:root[data-theme='dark'] .ganpati-theme .feedback-modal .feedback-field input,
+:root[data-theme='dark'] .ganpati-theme .feedback-modal .feedback-field textarea {
+  background: #261a1a;
+  border-color: rgba(245, 158, 11, 0.28);
+}
+
+:root[data-theme='dark'] .ganpati-theme .feedback-modal .feedback-form-note {
+  color: #d6d3d1;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .ganpati-theme .home-page__content {
