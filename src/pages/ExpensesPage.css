@@ -195,6 +195,29 @@ button.expenses-back-link {
   background: var(--accent-hover);
 }
 
+.expenses-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.expenses-outstanding-open {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid var(--accent-primary);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.expenses-outstanding-open:hover {
+  background: rgba(245, 158, 11, 0.12);
+}
+
 .expenses-success--banner {
   margin: 0 0 1rem;
 }
@@ -287,11 +310,41 @@ button.expenses-back-link {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
   background: rgba(46, 204, 113, 0.15);
   border-radius: 8px;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   color: var(--text-primary);
+}
+
+.expenses-admin-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.expenses-export-btn {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--accent-primary);
+  border-radius: 8px;
+  background: var(--accent-primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.expenses-export-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.expenses-export-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .expenses-admin-logout {
@@ -374,20 +427,31 @@ button.expenses-back-link {
 }
 
 .expenses-table th:nth-child(7),
-.expenses-table td.expenses-table__receipts {
-  width: 24%;
-  min-width: 11rem;
+.expenses-table td.expenses-table__payment {
+  width: 5.25rem;
+  text-align: center;
 }
 
 .expenses-table th:nth-child(8),
-.expenses-table td.expenses-table__remarks {
-  width: 16%;
-  min-width: 8rem;
+.expenses-table td.expenses-table__receipts {
+  width: 22%;
+  min-width: 11rem;
 }
 
 .expenses-table th:nth-child(9),
+.expenses-table td.expenses-table__remarks {
+  width: 14%;
+  min-width: 8rem;
+}
+
+.expenses-table th:nth-child(10),
 .expenses-table td.expenses-table__actions {
-  width: 7.5rem;
+  width: 10.5rem;
+  min-width: 10.5rem;
+  max-width: 10.5rem;
+  vertical-align: top;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .expenses-status {
@@ -411,6 +475,34 @@ button.expenses-back-link {
 .expenses-status--declined {
   background: rgba(231, 76, 60, 0.2);
   color: var(--error-color);
+}
+
+.expenses-payment {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.expenses-payment--na {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.expenses-payment--unpaid {
+  background: rgba(245, 158, 11, 0.2);
+  color: #b45309;
+}
+
+.expenses-payment--paid {
+  background: rgba(34, 197, 94, 0.18);
+  color: #15803d;
+}
+
+.expenses-paid-btn {
+  border-color: #15803d !important;
+  color: #15803d !important;
 }
 
 .expenses-receipts-cell {
@@ -492,21 +584,27 @@ button.expenses-back-link {
   align-items: stretch;
   gap: 0.35rem;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .expenses-actions button {
   width: 100%;
-  padding: 0.35rem 0.5rem;
+  max-width: 100%;
+  padding: 0.4rem 0.45rem;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--bg-secondary);
   color: var(--text-primary);
   cursor: pointer;
   font: inherit;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  line-height: 1.25;
-  white-space: nowrap;
+  line-height: 1.3;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .expenses-decline-btn {

@@ -1,0 +1,28 @@
+.expenses-outstanding-modal {
+  width: min(920px, 100%);
+}
+
+.expenses-outstanding-note {
+  margin-bottom: 1rem;
+}
+
+.expenses-outstanding-status {
+  margin: 0 0 1rem;
+  color: var(--text-secondary);
+}
+
+.expenses-outstanding-total {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.expenses-outstanding-chart {
+  width: 100%;
+  min-height: 280px;
+  margin-bottom: 0.5rem;
+}
+
+.expenses-outstanding-chart .recharts-cartesian-axis-tick-value {
+  fill: var(--text-secondary);
+}

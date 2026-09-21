@@ -2,19 +2,25 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 import ScheduleButton from '../components/ScheduleButton';
+import ExpensesOutstandingModal from '../components/ExpensesOutstandingModal';
 import ReceiptPreviewModal from '../components/ReceiptPreviewModal';
 import {
   ADMIN_KEY_STORAGE,
+  adminUpdateExpense,
   approveExpense,
   buildExpenseFormData,
   createExpense,
   declineExpense,
   deleteExpense,
+  downloadExpensesExport,
   downloadReceipt,
   fetchExpenses,
   formatAmount,
   formatExpenseDate,
   resubmitExpense,
+  paymentStatusClassName,
+  paymentStatusLabel,
+  setExpensePaid,
   statusClassName,
   validateSubmitterUpi,
 } from '../utils/expensesApi';
@@ -38,6 +44,7 @@ const ExpensesPage = () => {
   const [adminMessage, setAdminMessage] = useState('');
 
   const [statusFilter, setStatusFilter] = useState('All');
+  const [paidFilter, setPaidFilter] = useState('All');
   const [sortBy, setSortBy] = useState('expense_date');
   const [sortOrder, setSortOrder] = useState('desc');
 
@@ -62,8 +69,17 @@ const ExpensesPage = () => {
   const [resubmitFiles, setResubmitFiles] = useState([]);
   const [resubmitError, setResubmitError] = useState('');
   const [resubmitSubmitting, setResubmitSubmitting] = useState(false);
+  const [editExpenseItem, setEditExpenseItem] = useState(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [editFiles, setEditFiles] = useState([]);
+  const [editContactError, setEditContactError] = useState('');
+  const [editError, setEditError] = useState('');
+  const [editSubmitting, setEditSubmitting] = useState(false);
   const [viewingReceipt, setViewingReceipt] = useState(null);
   const [downloadingReceiptId, setDownloadingReceiptId] = useState(null);
+  const [paidUpdatingId, setPaidUpdatingId] = useState(null);
+  const [exporting, setExporting] = useState(false);
+  const [outstandingOpen, setOutstandingOpen] = useState(false);
 
   const handleDownloadReceipt = async (receipt) => {
     setDownloadingReceiptId(receipt.id);
@@ -83,6 +99,7 @@ const ExpensesPage = () => {
       const result = await fetchExpenses({
         adminKey: key,
         status: statusFilter,
+        paid: paidFilter,
         sortBy,
         sortOrder,
       });
@@ -99,7 +116,7 @@ const ExpensesPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [adminKey, statusFilter, sortBy, sortOrder]);
+  }, [adminKey, statusFilter, paidFilter, sortBy, sortOrder]);
 
   useEffect(() => {
     loadExpenses();
@@ -130,6 +147,46 @@ const ExpensesPage = () => {
       setAdminKey('');
       setIsAdmin(false);
       setAdminMessage(err.message || 'Invalid admin key.');
+    }
+  };
+
+  const handleExportZip = async () => {
+    if (!isAdmin) return;
+    setExporting(true);
+    setFormSuccess('');
+    try {
+      await downloadExpensesExport({
+        adminKey,
+        status: statusFilter,
+        paid: paidFilter,
+        sortBy,
+        sortOrder,
+      });
+      setFormSuccess('Download started (Excel + receipts ZIP).');
+    } catch (err) {
+      window.alert(err.message || 'Failed to export expenses.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleTogglePaid = async (expense) => {
+    const nextPaid = !expense.is_paid;
+    const action = nextPaid ? 'mark as paid' : 'mark as unpaid';
+    const confirmed = window.confirm(
+      `${action.charAt(0).toUpperCase() + action.slice(1)} for "${expense.description}"?`,
+    );
+    if (!confirmed) return;
+
+    setPaidUpdatingId(expense.id);
+    try {
+      await setExpensePaid(expense.id, nextPaid, adminKey);
+      setFormSuccess(nextPaid ? 'Marked as paid.' : 'Marked as unpaid.');
+      await loadExpenses();
+    } catch (err) {
+      window.alert(err.message || 'Failed to update paid status.');
+    } finally {
+      setPaidUpdatingId(null);
     }
   };
 
@@ -357,6 +414,74 @@ const ExpensesPage = () => {
     setResubmitError('');
   };
 
+  const openAdminEdit = (expense) => {
+    setEditExpenseItem(expense);
+    setEditForm({
+      description: expense.description,
+      made_by: expense.made_by,
+      amount: String(expense.amount),
+      expense_date: expense.expense_date,
+      submitter_contact: expense.submitter_contact || '',
+    });
+    setEditFiles([]);
+    setEditContactError('');
+    setEditError('');
+  };
+
+  const closeAdminEdit = () => {
+    if (editSubmitting) return;
+    setEditExpenseItem(null);
+    setEditForm(emptyForm);
+    setEditFiles([]);
+    setEditContactError('');
+    setEditError('');
+  };
+
+  const handleAdminEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editExpenseItem) return;
+    setEditError('');
+    setEditContactError('');
+
+    const upiError = validateSubmitterUpi(editForm.submitter_contact);
+    if (upiError) {
+      setEditContactError(upiError);
+      return;
+    }
+
+    const existingCount = (editExpenseItem.receipts || []).length;
+    if (existingCount + editFiles.length > 3) {
+      setEditError('Maximum 3 receipt files allowed per expense.');
+      return;
+    }
+
+    setEditSubmitting(true);
+    try {
+      const formData = buildExpenseFormData(
+        {
+          description: editForm.description.trim(),
+          made_by: editForm.made_by.trim(),
+          amount: editForm.amount,
+          expense_date: editForm.expense_date,
+          submitter_contact: editForm.submitter_contact.trim(),
+        },
+        editFiles,
+      );
+      const result = await adminUpdateExpense(editExpenseItem.id, formData, adminKey);
+      if (result.receipt_warnings?.length) {
+        setFormSuccess(`Expense updated. Note: ${result.receipt_warnings[0]}`);
+      } else {
+        setFormSuccess('Expense updated.');
+      }
+      closeAdminEdit();
+      await loadExpenses();
+    } catch (err) {
+      setEditError(err.message || 'Failed to update expense.');
+    } finally {
+      setEditSubmitting(false);
+    }
+  };
+
   const handleResubmit = async (e) => {
     e.preventDefault();
     if (!resubmitExpenseItem) return;
@@ -415,9 +540,18 @@ const ExpensesPage = () => {
         <section className="expenses-list-section">
           <div className="expenses-toolbar">
             <h2>All Expenses</h2>
-            <button type="button" className="expenses-submit-open" onClick={openSubmitModal}>
-              Submit expense
-            </button>
+            <div className="expenses-toolbar-actions">
+              <button type="button" className="expenses-submit-open" onClick={openSubmitModal}>
+                Submit expense
+              </button>
+              <button
+                type="button"
+                className="expenses-outstanding-open"
+                onClick={() => setOutstandingOpen(true)}
+              >
+                Outstanding by person
+              </button>
+            </div>
             <div className="expenses-controls">
               <label>
                 Status
@@ -426,6 +560,14 @@ const ExpensesPage = () => {
                   <option value="Pending">Pending</option>
                   <option value="Approved">Approved</option>
                   <option value="Declined">Declined</option>
+                </select>
+              </label>
+              <label>
+                Payment
+                <select value={paidFilter} onChange={(e) => setPaidFilter(e.target.value)}>
+                  <option value="All">All</option>
+                  <option value="Unpaid">Unpaid (approved)</option>
+                  <option value="Paid">Paid</option>
                 </select>
               </label>
               <label>
@@ -451,7 +593,7 @@ const ExpensesPage = () => {
 
           {!isAdmin && (
             <form className="expenses-admin-login" onSubmit={handleAdminLogin}>
-              <label htmlFor="adminKey">Admin access (approve/decline)</label>
+              <label htmlFor="adminKey">Admin access (approve / decline / edit)</label>
               <div className="expenses-admin-login-row">
                 <input
                   id="adminKey"
@@ -469,9 +611,19 @@ const ExpensesPage = () => {
           {isAdmin && (
             <div className="expenses-admin-banner">
               <span>Admin mode enabled</span>
-              <button type="button" className="expenses-admin-logout" onClick={handleAdminLogout}>
-                Log out
-              </button>
+              <div className="expenses-admin-banner-actions">
+                <button
+                  type="button"
+                  className="expenses-export-btn"
+                  onClick={handleExportZip}
+                  disabled={exporting || loading}
+                >
+                  {exporting ? 'Preparing export...' : 'Download Excel + receipts (ZIP)'}
+                </button>
+                <button type="button" className="expenses-admin-logout" onClick={handleAdminLogout}>
+                  Log out
+                </button>
+              </div>
             </div>
           )}
 
@@ -491,6 +643,7 @@ const ExpensesPage = () => {
                     <th>Amount</th>
                     <th>Expense Date</th>
                     <th>Status</th>
+                    <th>Paid</th>
                     <th>Receipts</th>
                     <th>Remarks</th>
                     <th>Actions</th>
@@ -506,6 +659,11 @@ const ExpensesPage = () => {
                       <td className="expenses-table__date">{formatExpenseDate(expense.expense_date)}</td>
                       <td className="expenses-table__status">
                         <span className={statusClassName(expense.status)}>{expense.status}</span>
+                      </td>
+                      <td className="expenses-table__payment">
+                        <span className={paymentStatusClassName(expense)}>
+                          {paymentStatusLabel(expense)}
+                        </span>
                       </td>
                       <td className="expenses-table__receipts">
                         <div className="expenses-receipts-cell">
@@ -566,14 +724,33 @@ const ExpensesPage = () => {
                               Edit &amp; Resubmit
                             </button>
                           )}
-                          {isAdmin && (
+                          {isAdmin && expense.status === 'Approved' && (
                             <button
                               type="button"
-                              className="expenses-delete-btn"
-                              onClick={() => handleDeleteExpense(expense)}
+                              className="expenses-paid-btn"
+                              onClick={() => handleTogglePaid(expense)}
+                              disabled={paidUpdatingId === expense.id}
                             >
-                              Delete
+                              {paidUpdatingId === expense.id
+                                ? '...'
+                                : expense.is_paid
+                                  ? 'Mark unpaid'
+                                  : 'Mark paid'}
                             </button>
+                          )}
+                          {isAdmin && (
+                            <>
+                              <button type="button" onClick={() => openAdminEdit(expense)}>
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className="expenses-delete-btn"
+                                onClick={() => handleDeleteExpense(expense)}
+                              >
+                                Delete
+                              </button>
+                            </>
                           )}
                           {!isAdmin &&
                             expense.status !== 'Declined' &&
@@ -731,6 +908,105 @@ const ExpensesPage = () => {
         </div>
       )}
 
+      {editExpenseItem && (
+        <div className="expenses-modal-overlay" onClick={closeAdminEdit}>
+          <div
+            className="expenses-modal expenses-modal--wide"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-edit-expense-title"
+          >
+            <h2 id="admin-edit-expense-title">Edit expense</h2>
+            <p className="expenses-form-note">
+              Status stays {editExpenseItem.status}. You can correct details and add receipts (up to 3 total).
+            </p>
+            <form onSubmit={handleAdminEditSubmit}>
+              <div className="expenses-field">
+                <label htmlFor="admin-edit-description">Description</label>
+                <input
+                  id="admin-edit-description"
+                  type="text"
+                  value={editForm.description}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, description: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="expenses-field-row">
+                <div className="expenses-field">
+                  <label htmlFor="admin-edit-made-by">Paid By</label>
+                  <input
+                    id="admin-edit-made-by"
+                    type="text"
+                    value={editForm.made_by}
+                    onChange={(e) => setEditForm((prev) => ({ ...prev, made_by: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="expenses-field">
+                  <label htmlFor="admin-edit-amount">Amount (₹)</label>
+                  <input
+                    id="admin-edit-amount"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={editForm.amount}
+                    onChange={(e) => setEditForm((prev) => ({ ...prev, amount: e.target.value }))}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="expenses-field-row">
+                <div className="expenses-field">
+                  <label htmlFor="admin-edit-date">Expense Date</label>
+                  <input
+                    id="admin-edit-date"
+                    type="date"
+                    value={editForm.expense_date}
+                    onChange={(e) =>
+                      setEditForm((prev) => ({ ...prev, expense_date: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
+                <div className="expenses-field">
+                  <label htmlFor="admin-edit-contact">UPI ID or UPI phone number</label>
+                  <input
+                    id="admin-edit-contact"
+                    type="text"
+                    value={editForm.submitter_contact}
+                    onChange={(e) => {
+                      setEditContactError('');
+                      setEditForm((prev) => ({ ...prev, submitter_contact: e.target.value }));
+                    }}
+                    required
+                    maxLength={256}
+                    autoComplete="off"
+                  />
+                  {editContactError && <p className="expenses-error">{editContactError}</p>}
+                </div>
+              </div>
+              {renderReceiptPicker(
+                editFiles,
+                setEditFiles,
+                Math.max(0, 3 - (editExpenseItem.receipts || []).length),
+                'admin-edit-receipts',
+                'Add more receipts if needed. Existing receipts on this expense are kept.',
+              )}
+              {editError && <p className="expenses-error" role="alert">{editError}</p>}
+              <div className="expenses-modal-actions">
+                <button type="button" onClick={closeAdminEdit} disabled={editSubmitting}>
+                  Cancel
+                </button>
+                <button type="submit" className="expenses-submit" disabled={editSubmitting}>
+                  {editSubmitting ? 'Saving...' : 'Save changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {resubmitExpenseItem && (
         <div className="expenses-modal-overlay" onClick={closeResubmit}>
           <div className="expenses-modal expenses-modal--wide" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
@@ -815,6 +1091,12 @@ const ExpensesPage = () => {
           </div>
         </div>
       )}
+
+      <ExpensesOutstandingModal
+        open={outstandingOpen}
+        onClose={() => setOutstandingOpen(false)}
+        adminKey={adminKey}
+      />
 
       <ReceiptPreviewModal
         receipt={viewingReceipt}

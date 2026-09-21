@@ -55,9 +55,52 @@ export function buildExpenseFormData(fields, receiptFiles = []) {
   return formData;
 }
 
-export async function fetchExpenses({ adminKey = '', status = 'All', sortBy = 'expense_date', sortOrder = 'desc' } = {}) {
+export async function downloadExpensesExport({
+  adminKey,
+  status = 'All',
+  paid = 'All',
+  sortBy = 'expense_date',
+  sortOrder = 'desc',
+}) {
   const params = new URLSearchParams({
     status,
+    paid,
+    sort_by: sortBy,
+    sort_order: sortOrder,
+  });
+  const url = `${EXPENSES_URL}/export?${params.toString()}`;
+
+  let response;
+  try {
+    response = await fetch(url, { headers: buildHeaders(adminKey) });
+  } catch (error) {
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw new Error(
+        'Cannot reach the API. Start the backend with `python main.py` in ' +
+          'backend/v1.0.4/cpl-backend/api, then restart the frontend dev server.',
+      );
+    }
+    throw new Error(error?.message || 'Export failed. Please try again.');
+  }
+
+  if (!response.ok) {
+    await parseResponse(response);
+  }
+
+  const blob = await response.blob();
+  triggerBlobDownload(blob, 'ganpati-2026-expenses.zip');
+}
+
+export async function fetchExpenses({
+  adminKey = '',
+  status = 'All',
+  paid = 'All',
+  sortBy = 'expense_date',
+  sortOrder = 'desc',
+} = {}) {
+  const params = new URLSearchParams({
+    status,
+    paid,
     sort_by: sortBy,
     sort_order: sortOrder,
   });
@@ -76,6 +119,14 @@ export async function createExpense(formData) {
 export async function resubmitExpense(expenseId, formData) {
   return request(`${EXPENSES_URL}/${expenseId}/resubmit`, {
     method: 'PATCH',
+    body: formData,
+  });
+}
+
+export async function adminUpdateExpense(expenseId, formData, adminKey) {
+  return request(`${EXPENSES_URL}/${expenseId}/admin`, {
+    method: 'PATCH',
+    headers: buildHeaders(adminKey),
     body: formData,
   });
 }
@@ -99,6 +150,17 @@ export async function declineExpense(expenseId, declineReason, adminKey) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ decline_reason: declineReason }),
+  });
+}
+
+export async function setExpensePaid(expenseId, isPaid, adminKey) {
+  return request(`${EXPENSES_URL}/${expenseId}/paid`, {
+    method: 'PATCH',
+    headers: {
+      ...buildHeaders(adminKey),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ is_paid: isPaid }),
   });
 }
 
@@ -147,6 +209,20 @@ export function statusClassName(status) {
   if (status === 'Approved') return 'expenses-status expenses-status--approved';
   if (status === 'Declined') return 'expenses-status expenses-status--declined';
   return 'expenses-status expenses-status--pending';
+}
+
+export function paymentStatusLabel(expense) {
+  if (expense?.status !== 'Approved') return '—';
+  return expense.is_paid ? 'Paid' : 'Unpaid';
+}
+
+export function paymentStatusClassName(expense) {
+  if (expense?.status !== 'Approved') {
+    return 'expenses-payment expenses-payment--na';
+  }
+  return expense.is_paid
+    ? 'expenses-payment expenses-payment--paid'
+    : 'expenses-payment expenses-payment--unpaid';
 }
 
 /** Use same-origin /uploads in dev (Vite proxy) for local receipt files. */
