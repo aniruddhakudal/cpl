@@ -1,34 +1,3 @@
-export const AWARDEE_EVENTS = [
-  'Musical Chair - 4y to 7y',
-  'Musical Chair - 8y to 16y',
-  'Musical Chair - Senior Citizens',
-  'Musical Chair - Women',
-  'Musical Chair - Men',
-  'Carrom - Below 4y',
-  'Carrom - Below 14y',
-  'Carrom - Adults',
-  'Chess - Kids',
-  'Chess - Adults',
-  'Badminton - Kids',
-  'Badminton - Adults',
-  'Running Race - Upto 5y',
-  'Running Race - Upto 6y to 10y',
-  'Fast Cycling Race - Kids',
-  'Running Race - 10y to 20y',
-  'Fast Cycling - Below 5y',
-  'Slow Cycling - Above 5y',
-  'Limbu Chamcha - Below 5y',
-  'Limbu Chamcha - 5y to 10y',
-  'Limbu Chamcha - 10y to 20y',
-  'Slow Cycling - Ladies',
-  'Slow Cycling - 10y to 20y',
-  'Drawing - Upto 5y',
-  'Drawing - 6y to 12y',
-  'Drawing - 13y and above',
-  'Fancy Dress - Kids',
-  'Antakshari',
-];
-
 function eventCategory(eventName) {
   const name = (eventName || '').trim();
   if (name.includes(' - ')) {
@@ -104,4 +73,8 @@ export function sortAwardeeRecords(records) {
   );
 }
 
-export const SORTED_AWARDEE_EVENTS = sortAwardeeEventNames(AWARDEE_EVENTS);
+export function sortAwardeeEventRecords(records) {
+  return [...records].sort((left, right) =>
+    compareAwardeeEvents(left.event_name, right.event_name),
+  );
+}

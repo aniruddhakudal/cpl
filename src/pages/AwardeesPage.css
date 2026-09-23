@@ -306,6 +306,49 @@
   color: var(--text-primary);
 }
 
+.awardees-events-hint {
+  margin: 0 0 1rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.awardees-event-add-form {
+  grid-template-columns: 1fr auto;
+  align-items: end;
+}
+
+.awardees-field--grow {
+  min-width: 0;
+}
+
+.awardees-form-actions--inline {
+  margin: 0;
+}
+
+.awardees-events-table-wrap {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.awardees-events-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.awardees-events-table th,
+.awardees-events-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.awardees-events-table th {
+  font-weight: 700;
+}
+
 @media (max-width: 640px) {
   .awardees-content {
     padding: 0 1rem;
@@ -313,6 +356,10 @@
 
   .awardees-header {
     padding: 1.5rem 1rem;
+  }
+
+  .awardees-event-add-form {
+    grid-template-columns: 1fr;
   }
 
   .awardees-table th,

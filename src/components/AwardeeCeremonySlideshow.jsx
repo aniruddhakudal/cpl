@@ -3,7 +3,7 @@ import './AwardeeCeremonySlideshow.css';
 
 /**
  * Full-screen modal slideshow for prize distribution.
- * Each slide: event name, winner, runner-up (generic layout).
+ * Each slide: event name, winner, 1st/2nd runner-up (generic layout).
  */
 const AwardeeCeremonySlideshow = ({ items, onClose }) => {
   const slides = items || [];
@@ -80,7 +80,7 @@ const AwardeeCeremonySlideshow = ({ items, onClose }) => {
           </div>
 
           <div className="ceremony-slideshow__honoree ceremony-slideshow__honoree--runner">
-            <span className="ceremony-slideshow__role">Runner-up</span>
+            <span className="ceremony-slideshow__role">1st Runner-up</span>
             <span className="ceremony-slideshow__medal" aria-hidden="true">🥈</span>
             <p className="ceremony-slideshow__name">
               {current.runner_up_name?.trim() ? current.runner_up_name : '—'}
@@ -88,7 +88,7 @@ const AwardeeCeremonySlideshow = ({ items, onClose }) => {
           </div>
 
           <div className="ceremony-slideshow__honoree ceremony-slideshow__honoree--bronze">
-            <span className="ceremony-slideshow__role">Bronze</span>
+            <span className="ceremony-slideshow__role">2nd Runner-up</span>
             <span className="ceremony-slideshow__medal" aria-hidden="true">🥉</span>
             <p className="ceremony-slideshow__name">
               {current.bronze_name?.trim() ? current.bronze_name : '—'}

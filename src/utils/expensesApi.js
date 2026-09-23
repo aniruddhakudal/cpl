@@ -171,6 +171,27 @@ export async function deleteExpense(expenseId, adminKey) {
   });
 }
 
+export async function deleteExpenseReceipts(expenseId, receiptIds, adminKey) {
+  try {
+    return await request(`${EXPENSES_URL}/${expenseId}/receipts/delete`, {
+      method: 'POST',
+      headers: {
+        ...buildHeaders(adminKey),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ receipt_ids: receiptIds }),
+    });
+  } catch (error) {
+    if (error?.message === 'Not Found') {
+      throw new Error(
+        'Receipt delete is not available on the API yet. Stop and restart `python main.py` in ' +
+          'backend/v1.0.4/cpl-backend/api (or redeploy Render), then try again.',
+      );
+    }
+    throw error;
+  }
+}
+
 const UPI_PHONE_PATTERN = /^\d{10}$/;
 const UPI_ID_PATTERN = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/;
 

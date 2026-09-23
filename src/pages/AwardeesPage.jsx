@@ -2,13 +2,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AwardeeCeremonySlideshow from '../components/AwardeeCeremonySlideshow';
 import ThemeToggle from '../components/ThemeToggle';
-import { SORTED_AWARDEE_EVENTS, sortAwardeeRecords } from '../utils/awardeeEvents';
+import { sortAwardeeEventRecords, sortAwardeeRecords } from '../utils/awardeeEvents';
 import {
   ADMIN_KEY_STORAGE,
   createAwardee,
+  createAwardeeEvent,
   deleteAwardee,
+  deleteAwardeeEvent,
+  fetchAwardeeEvents,
   fetchAwardees,
   updateAwardee,
+  updateAwardeeEvent,
 } from '../utils/awardeesApi';
 import './AwardeesPage.css';
 
@@ -34,8 +38,20 @@ const AwardeesPage = () => {
   const [editForm, setEditForm] = useState(emptyForm);
   const [editError, setEditError] = useState('');
   const [ceremonyOpen, setCeremonyOpen] = useState(false);
+  const [awardeeEvents, setAwardeeEvents] = useState([]);
+  const [eventsError, setEventsError] = useState('');
+  const [newEventName, setNewEventName] = useState('');
+  const [eventFormError, setEventFormError] = useState('');
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [editEventName, setEditEventName] = useState('');
+  const [editEventError, setEditEventError] = useState('');
 
   const sortedAwardees = useMemo(() => sortAwardeeRecords(awardees), [awardees]);
+  const sortedEvents = useMemo(() => sortAwardeeEventRecords(awardeeEvents), [awardeeEvents]);
+  const eventNames = useMemo(
+    () => sortedEvents.map((row) => row.event_name),
+    [sortedEvents],
+  );
 
   const usedEventNames = useMemo(
     () => new Set(awardees.map((row) => row.event_name)),
@@ -43,9 +59,20 @@ const AwardeesPage = () => {
   );
 
   const availableEventsForAdd = useMemo(
-    () => SORTED_AWARDEE_EVENTS.filter((event) => !usedEventNames.has(event)),
-    [usedEventNames],
+    () => eventNames.filter((event) => !usedEventNames.has(event)),
+    [eventNames, usedEventNames],
   );
+
+  const loadEvents = useCallback(async () => {
+    setEventsError('');
+    try {
+      const data = await fetchAwardeeEvents();
+      setAwardeeEvents(data);
+    } catch (err) {
+      setEventsError(err.message || 'Failed to load events.');
+      setAwardeeEvents([]);
+    }
+  }, []);
 
   const loadAwardees = useCallback(async (key = adminKey) => {
     setLoading(true);
@@ -71,6 +98,10 @@ const AwardeesPage = () => {
   useEffect(() => {
     loadAwardees();
   }, [loadAwardees]);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -196,6 +227,69 @@ const AwardeesPage = () => {
     }
   };
 
+  const handleAddEvent = async (e) => {
+    e.preventDefault();
+    setEventFormError('');
+    const name = newEventName.trim();
+    if (!name) {
+      setEventFormError('Enter an event name.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await createAwardeeEvent(name, adminKey);
+      setNewEventName('');
+      await loadEvents();
+    } catch (err) {
+      setEventFormError(err.message || 'Failed to add event.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const openEditEventModal = (eventRow) => {
+    setEditingEvent(eventRow);
+    setEditEventName(eventRow.event_name);
+    setEditEventError('');
+  };
+
+  const closeEditEventModal = () => {
+    setEditingEvent(null);
+    setEditEventName('');
+    setEditEventError('');
+  };
+
+  const handleEditEventSubmit = async (e) => {
+    e.preventDefault();
+    const name = editEventName.trim();
+    if (!name) {
+      setEditEventError('Event name is required.');
+      return;
+    }
+    setSaving(true);
+    setEditEventError('');
+    try {
+      await updateAwardeeEvent(editingEvent.id, name, adminKey);
+      closeEditEventModal();
+      await Promise.all([loadEvents(), loadAwardees()]);
+    } catch (err) {
+      setEditEventError(err.message || 'Failed to update event.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteEvent = async (eventRow) => {
+    const confirmed = window.confirm(`Delete event "${eventRow.event_name}"?`);
+    if (!confirmed) return;
+    try {
+      await deleteAwardeeEvent(eventRow.id, adminKey);
+      await loadEvents();
+    } catch (err) {
+      window.alert(err.message || 'Failed to delete event.');
+    }
+  };
+
   return (
     <div className="awardees-page ganpati-theme">
       <ThemeToggle />
@@ -249,6 +343,71 @@ const AwardeesPage = () => {
               </button>
             </div>
 
+            <section className="awardees-form-section awardees-events-section">
+              <h2>Manage events</h2>
+              <p className="awardees-events-hint">
+                Add, rename, or remove events. Renaming updates existing awardee rows.
+                Delete is blocked while an award exists for that event.
+              </p>
+              {eventsError && <p className="awardees-error" role="alert">{eventsError}</p>}
+              <form className="awardees-form awardees-event-add-form" onSubmit={handleAddEvent}>
+                <div className="awardees-field awardees-field--grow">
+                  <label htmlFor="new-event-name">New event name</label>
+                  <input
+                    id="new-event-name"
+                    type="text"
+                    value={newEventName}
+                    onChange={(e) => setNewEventName(e.target.value)}
+                    placeholder="e.g. Fancy Dress - Kids"
+                    maxLength={255}
+                  />
+                </div>
+                <div className="awardees-form-actions awardees-form-actions--inline">
+                  <button type="submit" disabled={saving}>
+                    {saving ? 'Saving...' : 'Add event'}
+                  </button>
+                </div>
+                {eventFormError && <p className="awardees-error" role="alert">{eventFormError}</p>}
+              </form>
+              {sortedEvents.length > 0 && (
+                <div className="awardees-events-table-wrap">
+                  <table className="awardees-events-table">
+                    <thead>
+                      <tr>
+                        <th>Event</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedEvents.map((eventRow) => (
+                        <tr key={eventRow.id}>
+                          <td>{eventRow.event_name}</td>
+                          <td className="awardees-actions">
+                            <button type="button" onClick={() => openEditEventModal(eventRow)}>
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="awardees-delete-btn"
+                              onClick={() => handleDeleteEvent(eventRow)}
+                              disabled={usedEventNames.has(eventRow.event_name)}
+                              title={
+                                usedEventNames.has(eventRow.event_name)
+                                  ? 'Remove the awardee record first'
+                                  : 'Delete event'
+                              }
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+
             <section className="awardees-form-section">
               <h2>Add awardee</h2>
               <form className="awardees-form" onSubmit={handleAddSubmit}>
@@ -280,7 +439,7 @@ const AwardeesPage = () => {
                   />
                 </div>
                 <div className="awardees-field">
-                  <label htmlFor="awardee-runner-up">Runner-up (optional)</label>
+                  <label htmlFor="awardee-runner-up">1st Runner-up (optional)</label>
                   <input
                     id="awardee-runner-up"
                     type="text"
@@ -290,7 +449,7 @@ const AwardeesPage = () => {
                   />
                 </div>
                 <div className="awardees-field">
-                  <label htmlFor="awardee-bronze">Bronze (optional)</label>
+                  <label htmlFor="awardee-bronze">2nd Runner-up (optional)</label>
                   <input
                     id="awardee-bronze"
                     type="text"
@@ -327,8 +486,8 @@ const AwardeesPage = () => {
                   <th>S.No.</th>
                   <th>Event</th>
                   <th>Winner</th>
-                  <th>Runner-up</th>
-                  <th>Bronze</th>
+                  <th>1st Runner-up</th>
+                  <th>2nd Runner-up</th>
                   {isAdmin && <th>Actions</th>}
                 </tr>
               </thead>
@@ -392,6 +551,42 @@ const AwardeesPage = () => {
         />
       )}
 
+      {editingEvent && (
+        <div className="awardees-modal-overlay" onClick={closeEditEventModal}>
+          <div
+            className="awardees-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-event-title"
+          >
+            <h2 id="edit-event-title">Edit event</h2>
+            <form className="awardees-form" onSubmit={handleEditEventSubmit}>
+              <div className="awardees-field">
+                <label htmlFor="edit-event-name">Event name</label>
+                <input
+                  id="edit-event-name"
+                  type="text"
+                  value={editEventName}
+                  onChange={(e) => setEditEventName(e.target.value)}
+                  required
+                  maxLength={255}
+                />
+              </div>
+              {editEventError && <p className="awardees-error" role="alert">{editEventError}</p>}
+              <div className="awardees-form-actions">
+                <button type="submit" disabled={saving}>
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button type="button" onClick={closeEditEventModal}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {editingItem && (
         <div className="awardees-modal-overlay" onClick={closeEditModal}>
           <div
@@ -411,7 +606,7 @@ const AwardeesPage = () => {
                   onChange={(e) => setEditForm((prev) => ({ ...prev, event_name: e.target.value }))}
                   required
                 >
-                  {SORTED_AWARDEE_EVENTS.map((event) => (
+                  {eventNames.map((event) => (
                     <option
                       key={event}
                       value={event}
@@ -434,7 +629,7 @@ const AwardeesPage = () => {
                 />
               </div>
               <div className="awardees-field">
-                <label htmlFor="edit-awardee-runner-up">Runner-up (optional)</label>
+                <label htmlFor="edit-awardee-runner-up">1st Runner-up (optional)</label>
                 <input
                   id="edit-awardee-runner-up"
                   type="text"
@@ -446,7 +641,7 @@ const AwardeesPage = () => {
                 />
               </div>
               <div className="awardees-field">
-                <label htmlFor="edit-awardee-bronze">Bronze (optional)</label>
+                <label htmlFor="edit-awardee-bronze">2nd Runner-up (optional)</label>
                 <input
                   id="edit-awardee-bronze"
                   type="text"

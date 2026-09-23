@@ -45,6 +45,29 @@ export async function fetchAwardeeEvents() {
   return result.data || [];
 }
 
+export async function createAwardeeEvent(eventName, adminKey) {
+  return request(`${AWARDEES_URL}/events`, {
+    method: 'POST',
+    headers: buildHeaders(adminKey),
+    body: JSON.stringify({ event_name: eventName }),
+  });
+}
+
+export async function updateAwardeeEvent(eventId, eventName, adminKey) {
+  return request(`${AWARDEES_URL}/events/${eventId}`, {
+    method: 'PATCH',
+    headers: buildHeaders(adminKey),
+    body: JSON.stringify({ event_name: eventName }),
+  });
+}
+
+export async function deleteAwardeeEvent(eventId, adminKey) {
+  return request(`${AWARDEES_URL}/events/${eventId}`, {
+    method: 'DELETE',
+    headers: buildHeaders(adminKey),
+  });
+}
+
 export async function fetchAwardees(adminKey = '') {
   return request(AWARDEES_URL, {
     headers: buildHeaders(adminKey),

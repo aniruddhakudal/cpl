@@ -565,6 +565,10 @@ button.expenses-back-link {
   border-bottom: 1px solid rgba(102, 126, 234, 0.15);
 }
 
+.expenses-receipt-row--admin {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
 .expenses-receipt-row:last-child {
   padding-bottom: 0;
   border-bottom: none;
@@ -611,6 +615,87 @@ button.expenses-back-link {
 .expenses-receipt-download:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.expenses-receipt-remove,
+.expenses-receipt-remove-selected {
+  flex-shrink: 0;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--error-color);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--error-color);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.expenses-receipt-remove:hover:not(:disabled),
+.expenses-receipt-remove-selected:hover:not(:disabled) {
+  background: var(--error-color);
+  color: #fff;
+}
+
+.expenses-receipt-remove:disabled,
+.expenses-receipt-remove-selected:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.expenses-existing-receipts {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.expenses-existing-receipts__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.expenses-existing-receipts__label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.expenses-existing-receipts__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.expenses-existing-receipts__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.expenses-existing-receipts__check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1;
+  cursor: pointer;
+}
+
+.expenses-existing-receipts__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .expenses-remarks-cell {

@@ -12,6 +12,7 @@ import {
   createExpense,
   declineExpense,
   deleteExpense,
+  deleteExpenseReceipts,
   downloadExpensesExport,
   downloadReceipt,
   fetchExpenses,
@@ -77,6 +78,8 @@ const ExpensesPage = () => {
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [viewingReceipt, setViewingReceipt] = useState(null);
   const [downloadingReceiptId, setDownloadingReceiptId] = useState(null);
+  const [deletingReceiptKey, setDeletingReceiptKey] = useState(null);
+  const [selectedEditReceiptIds, setSelectedEditReceiptIds] = useState([]);
   const [paidUpdatingId, setPaidUpdatingId] = useState(null);
   const [exporting, setExporting] = useState(false);
   const [outstandingOpen, setOutstandingOpen] = useState(false);
@@ -91,6 +94,50 @@ const ExpensesPage = () => {
       setDownloadingReceiptId(null);
     }
   };
+
+  const applyExpenseUpdate = (updated) => {
+    if (!updated) return;
+    setExpenses((prev) => prev.map((row) => (row.id === updated.id ? updated : row)));
+    setEditExpenseItem((prev) => (prev && prev.id === updated.id ? updated : prev));
+  };
+
+  const handleRemoveReceipts = async (expense, receiptIds) => {
+    if (!receiptIds.length) return;
+    const count = receiptIds.length;
+    const confirmed = window.confirm(
+      count === 1
+        ? 'Remove this receipt from the expense?'
+        : `Remove ${count} selected receipts from this expense?`,
+    );
+    if (!confirmed) return;
+
+    const deleteKey = `${expense.id}:${[...receiptIds].sort((a, b) => a - b).join(',')}`;
+    setDeletingReceiptKey(deleteKey);
+    try {
+      const result = await deleteExpenseReceipts(expense.id, receiptIds, adminKey);
+      applyExpenseUpdate(result.data);
+      setSelectedEditReceiptIds((prev) => prev.filter((id) => !receiptIds.includes(id)));
+      if (viewingReceipt && receiptIds.includes(viewingReceipt.id)) {
+        setViewingReceipt(null);
+      }
+    } catch (err) {
+      window.alert(err.message || 'Failed to remove receipt(s).');
+    } finally {
+      setDeletingReceiptKey(null);
+    }
+  };
+
+  const toggleEditReceiptSelection = (receiptId) => {
+    setSelectedEditReceiptIds((prev) =>
+      prev.includes(receiptId)
+        ? prev.filter((id) => id !== receiptId)
+        : [...prev, receiptId],
+    );
+  };
+
+  const isReceiptDeleting = (expenseId, receiptIds) =>
+    deletingReceiptKey
+    === `${expenseId}:${[...receiptIds].sort((a, b) => a - b).join(',')}`;
 
   const loadExpenses = useCallback(async (key = adminKey) => {
     setLoading(true);
@@ -426,6 +473,7 @@ const ExpensesPage = () => {
     setEditFiles([]);
     setEditContactError('');
     setEditError('');
+    setSelectedEditReceiptIds([]);
   };
 
   const closeAdminEdit = () => {
@@ -435,6 +483,7 @@ const ExpensesPage = () => {
     setEditFiles([]);
     setEditContactError('');
     setEditError('');
+    setSelectedEditReceiptIds([]);
   };
 
   const handleAdminEditSubmit = async (e) => {
@@ -681,7 +730,10 @@ const ExpensesPage = () => {
                         <div className="expenses-receipts-cell">
                           {(expense.receipts || []).length === 0 && '-'}
                           {(expense.receipts || []).map((receipt) => (
-                            <div key={receipt.id} className="expenses-receipt-row">
+                            <div
+                              key={receipt.id}
+                              className={`expenses-receipt-row${isAdmin ? ' expenses-receipt-row--admin' : ''}`}
+                            >
                               <button
                                 type="button"
                                 className="expenses-receipt-link"
@@ -698,6 +750,16 @@ const ExpensesPage = () => {
                               >
                                 {downloadingReceiptId === receipt.id ? '...' : 'Download'}
                               </button>
+                              {isAdmin && (
+                                <button
+                                  type="button"
+                                  className="expenses-receipt-remove"
+                                  onClick={() => handleRemoveReceipts(expense, [receipt.id])}
+                                  disabled={isReceiptDeleting(expense.id, [receipt.id])}
+                                >
+                                  {isReceiptDeleting(expense.id, [receipt.id]) ? '...' : 'Remove'}
+                                </button>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -931,7 +993,8 @@ const ExpensesPage = () => {
           >
             <h2 id="admin-edit-expense-title">Edit expense</h2>
             <p className="expenses-form-note">
-              Status stays {editExpenseItem.status}. You can correct details and add receipts (up to 3 total).
+              Status stays {editExpenseItem.status}. You can correct details, remove receipts, and add
+              more (up to 3 total).
             </p>
             <form onSubmit={handleAdminEditSubmit}>
               <div className="expenses-field">
@@ -998,12 +1061,60 @@ const ExpensesPage = () => {
                   {editContactError && <p className="expenses-error">{editContactError}</p>}
                 </div>
               </div>
+              {(editExpenseItem.receipts || []).length > 0 && (
+                <div className="expenses-existing-receipts">
+                  <div className="expenses-existing-receipts__head">
+                    <span className="expenses-existing-receipts__label">Attached receipts</span>
+                    {selectedEditReceiptIds.length > 0 && (
+                      <button
+                        type="button"
+                        className="expenses-receipt-remove-selected"
+                        onClick={() =>
+                          handleRemoveReceipts(editExpenseItem, selectedEditReceiptIds)
+                        }
+                        disabled={isReceiptDeleting(
+                          editExpenseItem.id,
+                          selectedEditReceiptIds,
+                        )}
+                      >
+                        {isReceiptDeleting(editExpenseItem.id, selectedEditReceiptIds)
+                          ? 'Removing...'
+                          : `Remove selected (${selectedEditReceiptIds.length})`}
+                      </button>
+                    )}
+                  </div>
+                  <ul className="expenses-existing-receipts__list">
+                    {(editExpenseItem.receipts || []).map((receipt) => (
+                      <li key={receipt.id} className="expenses-existing-receipts__item">
+                        <label className="expenses-existing-receipts__check">
+                          <input
+                            type="checkbox"
+                            checked={selectedEditReceiptIds.includes(receipt.id)}
+                            onChange={() => toggleEditReceiptSelection(receipt.id)}
+                          />
+                          <span className="expenses-existing-receipts__name" title={receipt.file_name}>
+                            {receipt.file_name}
+                          </span>
+                        </label>
+                        <button
+                          type="button"
+                          className="expenses-receipt-remove"
+                          onClick={() => handleRemoveReceipts(editExpenseItem, [receipt.id])}
+                          disabled={isReceiptDeleting(editExpenseItem.id, [receipt.id])}
+                        >
+                          {isReceiptDeleting(editExpenseItem.id, [receipt.id]) ? '...' : 'Remove'}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               {renderReceiptPicker(
                 editFiles,
                 setEditFiles,
                 Math.max(0, 3 - (editExpenseItem.receipts || []).length),
                 'admin-edit-receipts',
-                'Add more receipts if needed. Existing receipts on this expense are kept.',
+                'Add more receipts if needed.',
               )}
               {editError && <p className="expenses-error" role="alert">{editError}</p>}
               <div className="expenses-modal-actions">
