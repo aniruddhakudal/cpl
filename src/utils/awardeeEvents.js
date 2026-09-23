@@ -15,8 +15,8 @@ export const AWARDEE_EVENTS = [
   'Running Race - Upto 6y to 10y',
   'Fast Cycling Race - Kids',
   'Running Race - 10y to 20y',
-  'Slow Cycling - Below 5y',
-  'Slow Citizens - Above 5y',
+  'Fast Cycling - Below 5y',
+  'Slow Cycling - Above 5y',
   'Limbu Chamcha - Below 5y',
   'Limbu Chamcha - 5y to 10y',
   'Limbu Chamcha - 10y to 20y',
@@ -25,6 +25,7 @@ export const AWARDEE_EVENTS = [
   'Drawing - Upto 5y',
   'Drawing - 6y to 12y',
   'Drawing - 13y and above',
+  'Fancy Dress - Kids',
   'Antakshari',
 ];
 

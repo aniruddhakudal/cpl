@@ -86,6 +86,14 @@ const AwardeeCeremonySlideshow = ({ items, onClose }) => {
               {current.runner_up_name?.trim() ? current.runner_up_name : '—'}
             </p>
           </div>
+
+          <div className="ceremony-slideshow__honoree ceremony-slideshow__honoree--bronze">
+            <span className="ceremony-slideshow__role">Bronze</span>
+            <span className="ceremony-slideshow__medal" aria-hidden="true">🥉</span>
+            <p className="ceremony-slideshow__name">
+              {current.bronze_name?.trim() ? current.bronze_name : '—'}
+            </p>
+          </div>
         </div>
       </div>
 

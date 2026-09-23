@@ -635,26 +635,38 @@ const ExpensesPage = () => {
           {!loading && expenses.length > 0 && (
             <div className="expenses-table-wrap">
               <table className="expenses-table">
+                <colgroup>
+                  <col className="expenses-col-index" />
+                  <col className="expenses-col-description" />
+                  <col className="expenses-col-paid-by" />
+                  <col className="expenses-col-amount" />
+                  <col className="expenses-col-date" />
+                  <col className="expenses-col-status" />
+                  <col className="expenses-col-payment" />
+                  <col className="expenses-col-receipts" />
+                  <col className="expenses-col-remarks" />
+                  <col className="expenses-col-actions" />
+                </colgroup>
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Description</th>
-                    <th>Paid By</th>
-                    <th>Amount</th>
-                    <th>Expense Date</th>
-                    <th>Status</th>
-                    <th>Paid</th>
-                    <th>Receipts</th>
-                    <th>Remarks</th>
-                    <th>Actions</th>
+                    <th className="expenses-table__index">#</th>
+                    <th className="expenses-table__description">Description</th>
+                    <th className="expenses-table__paid-by">Paid By</th>
+                    <th className="expenses-table__amount">Amount</th>
+                    <th className="expenses-table__date">Expense Date</th>
+                    <th className="expenses-table__status">Status</th>
+                    <th className="expenses-table__payment">Paid</th>
+                    <th className="expenses-table__receipts">Receipts</th>
+                    <th className="expenses-table__remarks">Remarks</th>
+                    <th className="expenses-table__actions">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {expenses.map((expense, index) => (
                     <tr key={expense.id}>
-                      <td>{index + 1}</td>
-                      <td>{expense.description}</td>
-                      <td>{expense.made_by}</td>
+                      <td className="expenses-table__index">{index + 1}</td>
+                      <td className="expenses-table__description">{expense.description}</td>
+                      <td className="expenses-table__paid-by">{expense.made_by}</td>
                       <td className="expenses-table__amount">{formatAmount(expense.amount)}</td>
                       <td className="expenses-table__date">{formatExpenseDate(expense.expense_date)}</td>
                       <td className="expenses-table__status">

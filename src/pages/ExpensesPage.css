@@ -377,22 +377,72 @@ button.expenses-back-link {
 
 .expenses-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  max-width: 100%;
 }
 
 .expenses-table {
   width: 100%;
+  min-width: 1320px;
   table-layout: fixed;
   border-collapse: collapse;
+  border-spacing: 0;
   font-size: 0.92rem;
+}
+
+/* Pixel widths — avoids % collapse that overlaps Description / Paid By */
+.expenses-col-index {
+  width: 3rem;
+}
+
+.expenses-col-description {
+  width: 15rem;
+}
+
+.expenses-col-paid-by {
+  width: 9rem;
+}
+
+.expenses-col-amount {
+  width: 7rem;
+}
+
+.expenses-col-date {
+  width: 7.5rem;
+}
+
+.expenses-col-status {
+  width: 6.5rem;
+}
+
+.expenses-col-payment {
+  width: 4.75rem;
+}
+
+.expenses-col-receipts {
+  width: 15rem;
+}
+
+.expenses-col-remarks {
+  width: 11rem;
+}
+
+.expenses-col-actions {
+  width: 11.5rem;
 }
 
 .expenses-table th,
 .expenses-table td {
-  padding: 0.75rem 0.6rem;
+  box-sizing: border-box;
+  padding: 0.75rem 0.65rem;
   border-bottom: 1px solid var(--border-color);
   text-align: left;
-  vertical-align: middle;
+  vertical-align: top;
   color: var(--text-primary);
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .expenses-table th {
@@ -401,57 +451,52 @@ button.expenses-back-link {
   vertical-align: bottom;
 }
 
-.expenses-table th:nth-child(1),
-.expenses-table td:nth-child(1) {
-  width: 2.75rem;
+.expenses-table__index {
   text-align: center;
+  vertical-align: middle;
 }
 
-.expenses-table th:nth-child(4),
-.expenses-table td.expenses-table__amount {
-  width: 6.5rem;
+.expenses-table__description {
+  line-height: 1.45;
+  white-space: normal;
+  min-width: 15rem;
+}
+
+.expenses-table__paid-by {
+  line-height: 1.45;
+  white-space: normal;
+  min-width: 9rem;
+}
+
+.expenses-table__amount {
   text-align: right;
   white-space: nowrap;
+  vertical-align: middle;
 }
 
-.expenses-table th:nth-child(5),
-.expenses-table td.expenses-table__date {
-  width: 7.5rem;
+.expenses-table__date {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.expenses-table__status,
+.expenses-table__payment {
+  text-align: center;
+  vertical-align: middle;
   white-space: nowrap;
 }
 
-.expenses-table th:nth-child(6),
-.expenses-table td.expenses-table__status {
-  width: 6.5rem;
-  text-align: center;
-}
-
-.expenses-table th:nth-child(7),
-.expenses-table td.expenses-table__payment {
-  width: 5.25rem;
-  text-align: center;
-}
-
-.expenses-table th:nth-child(8),
-.expenses-table td.expenses-table__receipts {
-  width: 22%;
-  min-width: 11rem;
-}
-
-.expenses-table th:nth-child(9),
-.expenses-table td.expenses-table__remarks {
-  width: 14%;
-  min-width: 8rem;
-}
-
-.expenses-table th:nth-child(10),
-.expenses-table td.expenses-table__actions {
-  width: 10.5rem;
-  min-width: 10.5rem;
-  max-width: 10.5rem;
+.expenses-table__receipts {
   vertical-align: top;
-  overflow: hidden;
-  box-sizing: border-box;
+}
+
+.expenses-table__remarks {
+  vertical-align: top;
+  line-height: 1.45;
+}
+
+.expenses-table__actions {
+  vertical-align: top;
 }
 
 .expenses-status {
@@ -571,7 +616,8 @@ button.expenses-back-link {
 .expenses-remarks-cell {
   font-size: 0.85rem;
   line-height: 1.45;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .expenses-decline-reason {
@@ -582,27 +628,24 @@ button.expenses-back-link {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.35rem;
+  gap: 0.4rem;
   width: 100%;
-  max-width: 100%;
-  min-width: 0;
 }
 
 .expenses-actions button {
+  display: block;
   width: 100%;
-  max-width: 100%;
-  padding: 0.4rem 0.45rem;
+  padding: 0.45rem 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--bg-secondary);
   color: var(--text-primary);
   cursor: pointer;
   font: inherit;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  line-height: 1.3;
-  white-space: normal;
-  word-break: break-word;
+  line-height: 1.25;
+  white-space: nowrap;
   text-align: center;
   box-sizing: border-box;
 }

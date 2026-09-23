@@ -16,6 +16,7 @@ const emptyForm = {
   event_name: '',
   winner_name: '',
   runner_up_name: '',
+  bronze_name: '',
 };
 
 const AwardeesPage = () => {
@@ -126,6 +127,7 @@ const AwardeesPage = () => {
           event_name: form.event_name,
           winner_name: form.winner_name.trim(),
           runner_up_name: form.runner_up_name.trim() || null,
+          bronze_name: form.bronze_name.trim() || null,
         },
         adminKey,
       );
@@ -144,6 +146,7 @@ const AwardeesPage = () => {
       event_name: item.event_name,
       winner_name: item.winner_name || '',
       runner_up_name: item.runner_up_name || '',
+      bronze_name: item.bronze_name || '',
     });
     setEditError('');
   };
@@ -169,6 +172,7 @@ const AwardeesPage = () => {
           event_name: editForm.event_name,
           winner_name: editForm.winner_name.trim(),
           runner_up_name: editForm.runner_up_name.trim() || null,
+          bronze_name: editForm.bronze_name.trim() || null,
         },
         adminKey,
       );
@@ -285,6 +289,16 @@ const AwardeesPage = () => {
                     maxLength={255}
                   />
                 </div>
+                <div className="awardees-field">
+                  <label htmlFor="awardee-bronze">Bronze (optional)</label>
+                  <input
+                    id="awardee-bronze"
+                    type="text"
+                    value={form.bronze_name}
+                    onChange={(e) => setForm((prev) => ({ ...prev, bronze_name: e.target.value }))}
+                    maxLength={255}
+                  />
+                </div>
                 {formError && <p className="awardees-error" role="alert">{formError}</p>}
                 <div className="awardees-form-actions">
                   <button type="submit" disabled={saving || availableEventsForAdd.length === 0}>
@@ -314,6 +328,7 @@ const AwardeesPage = () => {
                   <th>Event</th>
                   <th>Winner</th>
                   <th>Runner-up</th>
+                  <th>Bronze</th>
                   {isAdmin && <th>Actions</th>}
                 </tr>
               </thead>
@@ -333,6 +348,16 @@ const AwardeesPage = () => {
                         <span className="awardees-name-with-medal">
                           <span className="awardees-medal" aria-hidden="true">🥈</span>
                           {item.runner_up_name}
+                        </span>
+                      ) : (
+                        '—'
+                      )}
+                    </td>
+                    <td>
+                      {item.bronze_name ? (
+                        <span className="awardees-name-with-medal">
+                          <span className="awardees-medal" aria-hidden="true">🥉</span>
+                          {item.bronze_name}
                         </span>
                       ) : (
                         '—'
@@ -416,6 +441,18 @@ const AwardeesPage = () => {
                   value={editForm.runner_up_name}
                   onChange={(e) =>
                     setEditForm((prev) => ({ ...prev, runner_up_name: e.target.value }))
+                  }
+                  maxLength={255}
+                />
+              </div>
+              <div className="awardees-field">
+                <label htmlFor="edit-awardee-bronze">Bronze (optional)</label>
+                <input
+                  id="edit-awardee-bronze"
+                  type="text"
+                  value={editForm.bronze_name}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({ ...prev, bronze_name: e.target.value }))
                   }
                   maxLength={255}
                 />
