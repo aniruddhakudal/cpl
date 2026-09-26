@@ -384,7 +384,7 @@ button.expenses-back-link {
 
 .expenses-table {
   width: 100%;
-  min-width: 1320px;
+  min-width: 1420px;
   table-layout: fixed;
   border-collapse: collapse;
   border-spacing: 0;
@@ -410,6 +410,10 @@ button.expenses-back-link {
 
 .expenses-col-date {
   width: 7.5rem;
+}
+
+.expenses-col-created {
+  width: 9.5rem;
 }
 
 .expenses-col-status {
@@ -477,6 +481,12 @@ button.expenses-back-link {
 .expenses-table__date {
   white-space: nowrap;
   vertical-align: middle;
+}
+
+.expenses-table__created {
+  white-space: nowrap;
+  vertical-align: middle;
+  font-size: 0.85rem;
 }
 
 .expenses-table__status,

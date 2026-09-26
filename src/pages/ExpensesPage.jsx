@@ -17,6 +17,7 @@ import {
   downloadReceipt,
   fetchExpenses,
   formatAmount,
+  formatExpenseCreatedAt,
   formatExpenseDate,
   resubmitExpense,
   paymentStatusClassName,
@@ -46,8 +47,8 @@ const ExpensesPage = () => {
 
   const [statusFilter, setStatusFilter] = useState('All');
   const [paidFilter, setPaidFilter] = useState('All');
-  const [sortBy, setSortBy] = useState('expense_date');
-  const [sortOrder, setSortOrder] = useState('desc');
+  const [sortBy, setSortBy] = useState('created_at');
+  const [sortOrder, setSortOrder] = useState('asc');
 
   const [form, setForm] = useState(emptyForm);
   const [receiptFiles, setReceiptFiles] = useState([]);
@@ -690,6 +691,7 @@ const ExpensesPage = () => {
                   <col className="expenses-col-paid-by" />
                   <col className="expenses-col-amount" />
                   <col className="expenses-col-date" />
+                  <col className="expenses-col-created" />
                   <col className="expenses-col-status" />
                   <col className="expenses-col-payment" />
                   <col className="expenses-col-receipts" />
@@ -703,6 +705,7 @@ const ExpensesPage = () => {
                     <th className="expenses-table__paid-by">Paid By</th>
                     <th className="expenses-table__amount">Amount</th>
                     <th className="expenses-table__date">Expense Date</th>
+                    <th className="expenses-table__created">Submitted</th>
                     <th className="expenses-table__status">Status</th>
                     <th className="expenses-table__payment">Paid</th>
                     <th className="expenses-table__receipts">Receipts</th>
@@ -718,6 +721,9 @@ const ExpensesPage = () => {
                       <td className="expenses-table__paid-by">{expense.made_by}</td>
                       <td className="expenses-table__amount">{formatAmount(expense.amount)}</td>
                       <td className="expenses-table__date">{formatExpenseDate(expense.expense_date)}</td>
+                      <td className="expenses-table__created">
+                        {formatExpenseCreatedAt(expense.created_at)}
+                      </td>
                       <td className="expenses-table__status">
                         <span className={statusClassName(expense.status)}>{expense.status}</span>
                       </td>
