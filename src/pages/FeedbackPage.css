@@ -268,6 +268,92 @@
   min-width: 10rem;
 }
 
+.feedback-admin-login {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.feedback-admin-login label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.feedback-admin-login-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.feedback-admin-login-row input {
+  flex: 1;
+  min-width: 12rem;
+  padding: 0.6rem 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.feedback-admin-login-row button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.feedback-admin-message {
+  margin: 0.75rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.feedback-admin-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-card);
+  font-weight: 600;
+}
+
+.feedback-admin-logout {
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--error-color);
+  background: var(--error-color);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.feedback-actions button {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.feedback-delete-btn {
+  border-color: var(--error-color) !important;
+  color: var(--error-color) !important;
+}
+
 @media (max-width: 640px) {
   .feedback-content {
     padding: 0 1rem;

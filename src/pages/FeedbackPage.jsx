@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 import StarRatingInput from '../components/StarRatingInput';
 import {
+  ADMIN_KEY_STORAGE,
   createFeedback,
+  deleteFeedback,
   displayName,
   fetchFeedback,
   formatFeedbackDateTime,
@@ -26,8 +28,12 @@ const FeedbackPage = () => {
   const [formSuccess, setFormSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminKeyInput, setAdminKeyInput] = useState('');
+  const [adminKey, setAdminKey] = useState(() => sessionStorage.getItem(ADMIN_KEY_STORAGE) || '');
+  const [adminMessage, setAdminMessage] = useState('');
 
-  const loadFeedback = useCallback(async () => {
+  const loadFeedback = useCallback(async (key = adminKey) => {
     setLoading(true);
     setError('');
     try {
@@ -38,19 +44,77 @@ const FeedbackPage = () => {
         maxRating: 'all',
         anonymous: 'all',
         hasComment: 'all',
+        adminKey: key,
       });
       setItems(result.data || []);
+      setIsAdmin(Boolean(result.is_admin));
+      if (key && !result.is_admin) {
+        sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+        setAdminKey('');
+        setIsAdmin(false);
+        setAdminMessage('Invalid admin key.');
+      }
     } catch (err) {
       setError(err.message || 'Failed to load feedback.');
       setItems([]);
+      setIsAdmin(false);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [adminKey]);
 
   useEffect(() => {
     loadFeedback();
   }, [loadFeedback]);
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setAdminMessage('');
+    const key = adminKeyInput.trim();
+    if (!key) {
+      setAdminMessage('Enter admin key.');
+      return;
+    }
+    try {
+      const result = await fetchFeedback({ adminKey: key });
+      if (result.is_admin) {
+        sessionStorage.setItem(ADMIN_KEY_STORAGE, key);
+        setAdminKey(key);
+        setIsAdmin(true);
+        setAdminKeyInput('');
+        setAdminMessage('Admin access enabled.');
+        setItems(result.data || []);
+      } else {
+        throw new Error('Invalid admin key.');
+      }
+    } catch (err) {
+      sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+      setAdminKey('');
+      setIsAdmin(false);
+      setAdminMessage(err.message || 'Invalid admin key.');
+    }
+  };
+
+  const handleAdminLogout = () => {
+    sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+    setAdminKey('');
+    setAdminKeyInput('');
+    setIsAdmin(false);
+    setAdminMessage('');
+    loadFeedback('');
+  };
+
+  const handleDelete = async (item) => {
+    const label = displayName(item);
+    const confirmed = window.confirm(`Delete feedback from "${label}"?`);
+    if (!confirmed) return;
+    try {
+      await deleteFeedback(item.id, adminKey);
+      await loadFeedback();
+    } catch (err) {
+      window.alert(err.message || 'Failed to delete feedback.');
+    }
+  };
 
   const openSubmitModal = () => {
     setFormError('');
@@ -109,6 +173,33 @@ const FeedbackPage = () => {
       </header>
 
       <main className="feedback-content">
+        {!isAdmin && (
+          <form className="feedback-admin-login" onSubmit={handleAdminLogin}>
+            <label htmlFor="feedback-admin-key">Admin access (delete feedback)</label>
+            <div className="feedback-admin-login-row">
+              <input
+                id="feedback-admin-key"
+                type="password"
+                value={adminKeyInput}
+                onChange={(e) => setAdminKeyInput(e.target.value)}
+                placeholder="Enter admin key"
+                autoComplete="off"
+              />
+              <button type="submit">Unlock</button>
+            </div>
+            {adminMessage && <p className="feedback-admin-message">{adminMessage}</p>}
+          </form>
+        )}
+
+        {isAdmin && (
+          <div className="feedback-admin-banner">
+            <span>Admin mode enabled</span>
+            <button type="button" className="feedback-admin-logout" onClick={handleAdminLogout}>
+              Log out
+            </button>
+          </div>
+        )}
+
         <section className="feedback-list-section">
           <div className="feedback-toolbar">
             <h2>Community feedback</h2>
@@ -145,6 +236,7 @@ const FeedbackPage = () => {
                     <th>Name</th>
                     <th>Rating</th>
                     <th>Feedback</th>
+                    {isAdmin && <th>Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -159,6 +251,17 @@ const FeedbackPage = () => {
                       <td className="feedback-table-comment">
                         {item.feedback_text || '—'}
                       </td>
+                      {isAdmin && (
+                        <td className="feedback-actions">
+                          <button
+                            type="button"
+                            className="feedback-delete-btn"
+                            onClick={() => handleDelete(item)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

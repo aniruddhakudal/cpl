@@ -1,6 +1,15 @@
 import { API_BASE_URL } from '../config/api';
+import { ADMIN_KEY_STORAGE } from './registrationsApi';
 
 const FEEDBACK_URL = `${API_BASE_URL}/v1/ganpati/2026/feedback`;
+
+function buildHeaders(adminKey = '') {
+  const headers = {};
+  if (adminKey) {
+    headers['X-Admin-Key'] = adminKey;
+  }
+  return headers;
+}
 
 export const RATING_OPTIONS = Array.from({ length: 11 }, (_, i) => i * 0.5);
 
@@ -40,6 +49,7 @@ export async function fetchFeedback({
   maxRating = 'all',
   anonymous = 'all',
   hasComment = 'all',
+  adminKey = '',
 } = {}) {
   const params = new URLSearchParams({
     sort_by: sortBy,
@@ -57,7 +67,9 @@ export async function fetchFeedback({
   if (hasComment !== 'all') {
     params.set('has_comment', hasComment);
   }
-  return request(`${FEEDBACK_URL}?${params.toString()}`);
+  return request(`${FEEDBACK_URL}?${params.toString()}`, {
+    headers: buildHeaders(adminKey),
+  });
 }
 
 export async function createFeedback(payload) {
@@ -67,6 +79,15 @@ export async function createFeedback(payload) {
     body: JSON.stringify(payload),
   });
 }
+
+export async function deleteFeedback(feedbackId, adminKey) {
+  return request(`${FEEDBACK_URL}/${feedbackId}`, {
+    method: 'DELETE',
+    headers: buildHeaders(adminKey),
+  });
+}
+
+export { ADMIN_KEY_STORAGE };
 
 export function ratingLabel(rating) {
   if (rating === 0) return 'Improvement needed';
